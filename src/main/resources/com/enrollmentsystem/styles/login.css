@@ -1,0 +1,43 @@
+.login-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.inputs {
+    -fx-padding: 5px 15px;
+    -fx-min-height: 51px;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-border-color: #ABABAB;
+    -fx-border-width: 1px;
+    -fx-font-size: 14px;
+}
+
+.login-btn {
+    -fx-min-height: 51px;
+    -fx-padding: 10px;
+    -fx-text-fill: #fafafa;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-color: #EF7707;
+    -fx-border-radius: 0px;
+    -fx-background-radius: 0px;
+    -fx-cursor: hand;
+}
+
+.login-btn:hover {
+    -fx-background-color: #FFBC7D;
+}
+
+.errorLabel {
+    -fx-font-size: 14px;
+}
+
+.spinner {
+    -fx-progress-color: #fafafa;
+}
+
+.spinner,
+.spinner .box {
+    -fx-background-color: tranparent;
+}
