@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane fx:id="root" prefHeight="679.0" prefWidth="1185.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.enrollment.RequirementsController">
+   <children>
+      <ScrollPane fitToWidth="true" layoutX="40.0" layoutY="40.0" prefHeight="200.0" prefWidth="1145.0" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="0.0">
+         <content>
+            <VBox prefHeight="677.0" prefWidth="1143.0" styleClass="main-vbox">
+               <children>
+                  <Label styleClass="main-label" text="Requirements Checklist" />
+                  <VBox prefHeight="521.0" prefWidth="1123.0" styleClass="table-vbox" VBox.vgrow="ALWAYS">
+                     <children>
+                        <HBox fx:id="searchContainer" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="949.0" styleClass="search-container" />
+                        <TableView fx:id="requirementsTable" editable="true" prefHeight="319.0" VBox.vgrow="ALWAYS">
+                          <columns>
+                            <TableColumn fx:id="lrnCol" editable="false" minWidth="50.0" prefWidth="-1.0" sortable="false" text="LRN" />
+                            <TableColumn fx:id="lastnameCol" editable="false" minWidth="50.0" prefWidth="-1.0" sortable="false" text="LAST NAME" />
+                              <TableColumn fx:id="firstnameCol" editable="false" minWidth="50.0" prefWidth="-1.0" sortable="false" text="FIRST NAME" />
+                              <TableColumn fx:id="middlenameCol" editable="false" minWidth="50.0" prefWidth="-1.0" sortable="false" text="MIDDLE NAME" />
+                              <TableColumn fx:id="beefCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="BEEF" />
+                              <TableColumn fx:id="sf9Col" minWidth="30.0" prefWidth="-1.0" sortable="false" text="SF9" />
+                              <TableColumn fx:id="psaCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="PSA" />
+                              <TableColumn fx:id="gmcCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="GMC" />
+                              <TableColumn fx:id="auCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="AU" />
+                              <TableColumn fx:id="formsCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="FORMS" />
+                              <TableColumn fx:id="alsCol" minWidth="30.0" prefWidth="-1.0" sortable="false" text="ALS COC" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="63.0" prefWidth="1130.0" styleClass="footer">
+                     <children>
+                        <Label styleClass="legend" text="LEGEND" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                           <children>
+                              <Label text="BEEF - Basic Education Enrollment Form" />
+                              <Label text="SF9 - Report Card" />
+                              <Label text="PSA - Birth Certificate" />
+                              <Label text="GMC - Good Moral Character" />
+                              <Label text="AU - Affidavit of Undertaking" />
+                              <Label text="FORMS - ALS Form 5" />
+                           </children>
+                        </HBox>
+                        <Label text="ALS COC - Certificate of Completion" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="50.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                     </padding></VBox>
+               </children>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</AnchorPane>

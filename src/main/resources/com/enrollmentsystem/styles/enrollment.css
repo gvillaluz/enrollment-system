@@ -1,0 +1,39 @@
+.addStudentBtn {
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-max-width: 200px;
+    -fx-max-height: 29px;
+    -fx-pref-width: 193px;
+    -fx-background-color: #1F7D49;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-font-size: 1.125em;
+}
+
+.addStudentBtn:hover {
+    -fx-background-color: #38A86A;
+}
+
+.searchbar {
+    -fx-min-width: 0;
+    -fx-min-height: 0;
+    -fx-max-height: 30px;
+}
+
+.searchbar,
+.addStudentBtn {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.table-columns {
+    -fx-padding: 5px;
+}
+
+.btn-action {
+    -fx-underline: true;
+    -fx-font-weight: bold;
+    -fx-font-size: 0.875em;
+    -fx-cursor: hand;
+}

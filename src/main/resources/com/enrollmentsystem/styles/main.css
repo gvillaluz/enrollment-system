@@ -1,0 +1,58 @@
+.titlebar {
+    -fx-background-color: #EF7707;
+}
+
+.right-titlebar .title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FAFAFA;
+}
+
+.left-titlebar .title-greetings {
+    -fx-font-size: 20px;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+}
+
+.left-titlebar .logoutBtn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FAFAFA;
+    -fx-padding: 10px;
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+}
+
+.sidebar {
+    -fx-background-color: #FAFAFA;
+}
+
+.sidebar-btns {
+    -fx-padding: 0.5em 1em 0.5em 1.2em;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.dropdown {
+    -fx-padding: 0.7em 1.5em 0.7em 1.5em;
+}
+
+.sidebar-btns.add-grade-student {
+    -fx-padding: 0.5em 1em 0.5em 2em;
+}
+
+.sidebar-btns:hover {
+    -fx-background-color: #D9D9D9;
+}
+
+.scroll-pane,
+.scroll-pane:focused,
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0 !important;
+    -fx-padding: 0 !important;
+}
+
+.active {
+    -fx-background-color: #D9D9D9;
+}

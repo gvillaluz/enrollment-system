@@ -1,0 +1,23 @@
+.main-vbox {
+    -fx-spacing: 10px;
+}
+
+.main-vbox .main-label {
+    -fx-font-size: 1.375em;
+    -fx-font-weight: bold;
+}
+
+.main-vbox .table-vbox,
+.main-vbox .footer {
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+}
+
+.main-vbox .table-vbox {
+    -fx-padding: 20 50 40 50;
+    -fx-spacing: 10px;
+}
+
+.main-vbox .footer .legend {
+    -fx-text-fill: red;
+}

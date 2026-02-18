@@ -15,7 +15,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         CSSFX.start();
 
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/login/LoginView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("views/login/Login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
         scene.getStylesheets().add(

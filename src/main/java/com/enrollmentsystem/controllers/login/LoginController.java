@@ -6,7 +6,6 @@ import com.enrollmentsystem.viewmodels.login.LoginViewModel;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -69,7 +68,7 @@ public class LoginController {
 
     private void goToDashboard() {
         try {
-            FXMLLoader dashboardLoader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/Dashboard.fxml"));
+            FXMLLoader dashboardLoader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/core/Main.fxml"));
             Parent dashboardRoot = dashboardLoader.load();
 
             Scene currentScene = root.getScene();
@@ -77,7 +76,7 @@ public class LoginController {
 
             currentScene.getStylesheets().clear();
             currentScene.getStylesheets().add(
-                    Objects.requireNonNull(App.class.getResource("styles/dashboard.css")).toExternalForm()
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/main.css")).toExternalForm()
             );
 
             currentScene.setRoot(dashboardRoot);

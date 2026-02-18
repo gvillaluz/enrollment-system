@@ -12,6 +12,9 @@ module com.enrollmentsystem {
     exports com.enrollmentsystem;
     exports com.enrollmentsystem.controllers.login;
     opens com.enrollmentsystem.controllers.login to javafx.fxml;
-    opens com.enrollmentsystem.controllers.dashboard to javafx.fxml;
     opens com.enrollmentsystem.controllers to javafx.fxml;
+    opens com.enrollmentsystem.controllers.dashboard.core to javafx.fxml;
+    opens com.enrollmentsystem.controllers.dashboard.academic to javafx.fxml;
+    opens com.enrollmentsystem.controllers.dashboard.enrollment to javafx.fxml;
+    opens com.enrollmentsystem.controllers.dashboard.admin to javafx.fxml;
 }

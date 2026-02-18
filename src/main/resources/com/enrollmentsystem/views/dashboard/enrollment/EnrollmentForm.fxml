@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.SVGPath?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="615.0" prefWidth="911.0" styleClass="root" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.enrollment.EnrollmentFormController">
+   <children>
+      <BorderPane maxHeight="450.0" maxWidth="700.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="745.0" styleClass="dialog">
+         <top>
+            <HBox alignment="CENTER" maxHeight="44.0" prefHeight="57.0" styleClass="dialog-title-bar" BorderPane.alignment="CENTER">
+               <children>
+                  <Label styleClass="title-bar-label" text="STUDENT DETAILS" />
+                  <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Button maxHeight="27.0" maxWidth="27.0" minHeight="27.0" minWidth="27.0" mnemonicParsing="false" onAction="#exitPopup" prefHeight="27.0" prefWidth="27.0" styleClass="title-bar-exit">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <SVGPath content="M24 0H3C2.20435 0 1.44129 0.31607 0.87868 0.87868C0.31607 1.44129 0 2.20435 0 3V24C0 24.7956 0.31607 25.5587 0.87868 26.1213C1.44129 26.6839 2.20435 27 3 27H24C24.7956 27 25.5587 26.6839 26.1213 26.1213C26.6839 25.5587 27 24.7956 27 24V3C27 2.20435 26.6839 1.44129 26.1213 0.87868C25.5587 0.31607 24.7956 0 24 0ZM18.9 21L13.5 15.6L8.1 21L6 18.9L11.4 13.5L6 8.1L8.1 6L13.5 11.4L18.9 6L21 8.1L15.6 13.5L21 18.9L18.9 21Z" fill="#7D2A1F" styleClass="icon-close" />
+                     </graphic>
+                  </Button>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </HBox>
+         </top>
+         <center>
+            <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-content" BorderPane.alignment="CENTER">
+               <children>
+                  <TabPane prefHeight="200.0" prefWidth="200.0" styleClass=".tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                     <tabs>
+                        <Tab text="LEARNER INFORMATION">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="anchor-pane">
+                                 <children>
+                                    <VBox prefHeight="181.0" prefWidth="100.0" styleClass="vbox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="LRN:" />
+                                                <TextField fx:id="lrnField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Last Name:" />
+                                                <TextField fx:id="lastnameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="First Name:" />
+                                                <TextField fx:id="firstnameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Middle Name:" />
+                                                <TextField fx:id="middlenameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Extension Name:" />
+                                                <TextField fx:id="extensionField11" prefHeight="25.0" prefWidth="524.0" promptText="(if applicable)" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Birthdate:" />
+                                                <DatePicker fx:id="dateField11" prefHeight="25.0" prefWidth="524.0" promptText="dd/mm/yyyy" styleClass="date-picker" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Age:" />
+                                                <TextField fx:id="ageField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Sex:" />
+                                                <ComboBox fx:id="sexDropdown11" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select one&gt;" styleClass="dropdown" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="100.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="40.0" top="40.0" />
+                                       </padding>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
+                        <Tab text="ACADEMIC INFORMATION">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="anchor-pane">
+                                 <children>
+                                    <VBox prefHeight="181.0" prefWidth="100.0" spacing="5.0" styleClass="vbox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                                       <padding>
+                                          <Insets bottom="40.0" top="40.0" />
+                                       </padding>
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label styleClass="subtitles" text="For Returning Learner (Balik-Aral) and Those Who will Transfer/Move In">
+                                                   <HBox.margin>
+                                                      <Insets bottom="5.0" />
+                                                   </HBox.margin></Label>
+                                             </children>
+                                             <padding>
+                                                <Insets left="150.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Last Grade Level Completed: " />
+                                                <TextField prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Last School Year Completed: " />
+                                                <TextField prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Last School Attended: " />
+                                                <TextField prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="School ID: " />
+                                                <TextField prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label styleClass="subtitles" text="For Learners in Senior High School">
+                                                   <HBox.margin>
+                                                      <Insets bottom="7.0" top="7.0" />
+                                                   </HBox.margin></Label>
+                                             </children>
+                                             <padding>
+                                                <Insets left="150.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Semester:" />
+                                                <RadioButton mnemonicParsing="false" text="1st Sem">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="semesterGroup" />
+                                                   </toggleGroup>
+                                                </RadioButton>
+                                                <RadioButton mnemonicParsing="false" text="2nd Sem" toggleGroup="$semesterGroup">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </RadioButton>
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Track:" />
+                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select track&gt;" styleClass="dropdown" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Strand:" />
+                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select strand&gt;" styleClass="dropdown" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                          <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Section:" />
+                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select section&gt;" styleClass="dropdown" />
+                                             </children>
+                                             <padding>
+                                                <Insets left="70.0" />
+                                             </padding>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </AnchorPane>
+                           </content>
+                        </Tab>
+                        <Tab text="REQUIREMENT">
+                           <content>
+                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" styleClass="anchor-pane">
+                                 <children>
+                                    <VBox layoutX="303.0" layoutY="39.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="80.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="30.0">
+                                       <children>
+                                          <HBox id="first-row" prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS" />
+                                                <HBox maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row" />
+                                             </children>
+                                             <styleClass>
+                                                <String fx:value="rows" />
+                                                <String fx:value="blank" />
+                                             </styleClass>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="BEEF Form" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Original SF9 (Grade 10 Report Card)" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Photocopy of PSA Birth Certificate" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Certificate of Good Moral Character (optional)" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Affidavit of Undertaking" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="ALS Graduate:" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row" />
+                                             </children>
+                                             <styleClass>
+                                                <String fx:value="rows" />
+                                                <String fx:value="blank" />
+                                             </styleClass>
+                                          </HBox>
+                                          <HBox prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Alternative Learning System (ALS) Form 5" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                          <HBox id="last-row" prefHeight="100.0" prefWidth="200.0" styleClass="rows">
+                                             <children>
+                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" styleClass="left-row" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <Label styleClass="box-labels" text="Alternative Learning System (ALS) Certificate of Completion" />
+                                                   </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" maxWidth="94.0" prefHeight="100.0" prefWidth="200.0" styleClass="right-row">
+                                                   <children>
+                                                      <CheckBox mnemonicParsing="false" styleClass="checkboxes" />
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </HBox>
+                                       </children>
+                                    </VBox>
+                                 </children></AnchorPane>
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+                  <HBox alignment="CENTER" prefHeight="34.0" prefWidth="600.0">
+                     <children>
+                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="back-btn" text="Back">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                        </Button>
+                        <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="clear-btn" text="Clear">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                        </Button>
+                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="next-btn" text="Next">
+                           <padding>
+                              <Insets left="5.0" right="5.0" />
+                           </padding>
+                        </Button>
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
+                     </padding>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding>
+            </VBox>
+         </center>
+      </BorderPane>
+   </children>
+   <padding>
+      <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+   </padding>
+</StackPane>
