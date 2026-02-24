@@ -101,7 +101,6 @@ public class EnrollmentFormController {
         validation.registerValidator(sexDropdown, Validator.createEmptyValidator("Sex is required."));
 
         validation.setErrorDecorationEnabled(false);
-        validation.setValidationDecorator(new GraphicValidationDecoration() );
     }
 
     private void setupDropdownSelects() {
