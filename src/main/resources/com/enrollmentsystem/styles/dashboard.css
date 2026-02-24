@@ -8,7 +8,7 @@
 
 .first-row, .second-row {
     -fx-background-color: #FAFAFA;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
     -fx-padding: 15px;
 }
 

@@ -1,0 +1,44 @@
+.main-vbox {
+    -fx-padding: 10;
+}
+
+.main-vbox .title-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.375em;
+    -fx-padding: 0 0 10 0;
+}
+
+.main-vbox .sub-vbox {
+    -fx-padding: 10 20 10 20;
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
+}
+
+.main-vbox .sub-vbox .field-labels {
+    -fx-font-size: 16px;
+    -fx-padding: 0 10 0 0;
+}
+
+.main-vbox .sub-vbox .fields {
+    -fx-background-color: transparent;
+    -fx-border-color: #ABABAB;
+}
+
+.main-vbox .sub-vbox .dropdown {
+    -fx-padding: 1;
+    -fx-background-color: #D9D9D9;
+    -fx-border-color: #ABABAB;
+    -fx-max-width: 145;
+    -fx-border-radius: 0;
+}
+
+.load-btn {
+    -fx-background-color: #6988AC;
+    -fx-min-width: 148;
+    -fx-min-height: 29;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-text-fill: #FAFAFA;
+}

@@ -30,7 +30,7 @@ public class UserRepository {
                             rs.getString("middle_name"),
                             rs.getString("username"),
                             rs.getString("password"),
-                            Role.valueOf(rs.getString("role").toUpperCase())
+                            Role.fromString(rs.getString("role"))
                     );
                 }
             }

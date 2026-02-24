@@ -31,6 +31,24 @@
     -fx-padding: 5px;
 }
 
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #B9B9B9;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: lightgray;
+}
+
+.table-row-cell:hover .table-cell {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover .separator .line {
+    -fx-border-color: transparent; /* Match your orange theme on hover */
+}
+
 .btn-action {
     -fx-underline: true;
     -fx-font-weight: bold;

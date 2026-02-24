@@ -1,36 +1,34 @@
 package com.enrollmentsystem.viewmodels.enrollment;
 
 import com.enrollmentsystem.dtos.EnrollmentSummaryDTO;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import com.enrollmentsystem.enums.EnrollmentStatus;
+import javafx.beans.property.*;
 
 public class EnrollmentSummaryViewModel {
-    private final StringProperty lrn = new SimpleStringProperty();
-    private final StringProperty lastName = new SimpleStringProperty();
-    private final StringProperty firstName = new SimpleStringProperty();
-    private final StringProperty middleName = new SimpleStringProperty();
-    private final StringProperty academicYear = new SimpleStringProperty();
-    private final IntegerProperty grade = new SimpleIntegerProperty();
-    private final StringProperty term = new SimpleStringProperty();
-    private final StringProperty track = new SimpleStringProperty();
-    private final StringProperty strand = new SimpleStringProperty();
-    private final StringProperty section = new SimpleStringProperty();
-    private final StringProperty status = new SimpleStringProperty();
+    private final StringProperty lrn;
+    private final StringProperty lastName;
+    private final StringProperty firstName;
+    private final StringProperty middleName;
+    private final StringProperty academicYear;
+    private final IntegerProperty grade;
+    private final StringProperty term;
+    private final StringProperty track;
+    private final StringProperty strand;
+    private final StringProperty section;
+    private final ObjectProperty<EnrollmentStatus> status;
 
     public EnrollmentSummaryViewModel(EnrollmentSummaryDTO dto) {
-        this.lrn.set(dto.getLrn());
-        this.lastName.set(dto.getLastName());
-        this.firstName.set(dto.getFirstName());
-        this.middleName.set(dto.getMiddleName());
-        this.academicYear.set(dto.getAcademicYear());
-        this.grade.set(dto.getGrade());
-        this.term.set(dto.getTerm());
-        this.track.set(dto.getTrack());
-        this.strand.set(dto.getStrand());
-        this.section.set(dto.getSection());
-        this.status.set(dto.getStatus());
+        this.lrn = new SimpleStringProperty(dto.getLrn());
+        this.lastName = new SimpleStringProperty(dto.getLastName());
+        this.firstName = new SimpleStringProperty(dto.getFirstName());
+        this.middleName = new SimpleStringProperty(dto.getMiddleName());
+        this.academicYear = new SimpleStringProperty(dto.getAcademicYear());
+        this.grade = new SimpleIntegerProperty(dto.getGrade());
+        this.term = new SimpleStringProperty(dto.getTerm());
+        this.track = new SimpleStringProperty(dto.getTrack());
+        this.strand = new SimpleStringProperty(dto.getStrand());
+        this.section = new SimpleStringProperty(dto.getSection());
+        this.status = new SimpleObjectProperty<EnrollmentStatus>(dto.getStatus());
     }
 
     public StringProperty lrnProperty() { return lrn; }
@@ -43,5 +41,5 @@ public class EnrollmentSummaryViewModel {
     public StringProperty trackProperty() { return track; }
     public StringProperty strandProperty() { return strand; }
     public StringProperty sectionProperty() { return section; }
-    public StringProperty statusProperty() { return status; }
+    public ObjectProperty<EnrollmentStatus> statusProperty() { return status; }
 }

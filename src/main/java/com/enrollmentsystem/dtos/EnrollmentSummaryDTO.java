@@ -1,5 +1,7 @@
 package com.enrollmentsystem.dtos;
 
+import com.enrollmentsystem.enums.EnrollmentStatus;
+
 import java.time.LocalDate;
 
 public class EnrollmentSummaryDTO {
@@ -13,11 +15,11 @@ public class EnrollmentSummaryDTO {
     private String track;
     private String strand;
     private String section;
-    private String status;
+    private EnrollmentStatus status;
 
     public EnrollmentSummaryDTO(String LRN, String lastName, String firstName, String middleName,
                                 String academicYear, Integer grade, String term, String track,
-                                String strand, String section, String status) {
+                                String strand, String section, EnrollmentStatus status) {
         this.LRN = LRN;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -61,6 +63,6 @@ public class EnrollmentSummaryDTO {
     public String getSection() { return section; }
     public void setSection(String section) { this.section = section; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public EnrollmentStatus getStatus() { return status; }
+    public void setStatus(EnrollmentStatus status) { this.status = status; }
 }

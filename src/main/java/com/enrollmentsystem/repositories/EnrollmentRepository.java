@@ -2,6 +2,7 @@ package com.enrollmentsystem.repositories;
 
 import com.enrollmentsystem.dtos.EnrollmentDTO;
 import com.enrollmentsystem.dtos.EnrollmentSummaryDTO;
+import com.enrollmentsystem.enums.EnrollmentStatus;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +36,7 @@ public class EnrollmentRepository {
                             rs.getString("track"),
                             rs.getString("strand"),
                             rs.getString("section"),
-                            rs.getString("status")
+                            EnrollmentStatus.fromString(rs.getString("status"))
                     );
 
                     summary.add(enrollmentSummary);

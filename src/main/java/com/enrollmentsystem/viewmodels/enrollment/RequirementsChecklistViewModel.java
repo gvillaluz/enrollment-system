@@ -1,10 +1,15 @@
 package com.enrollmentsystem.viewmodels.enrollment;
 
 import com.enrollmentsystem.dtos.RequirementSummaryDTO;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 
 public class RequirementsChecklistViewModel {
+    private final StringProperty searchValue = new SimpleStringProperty("");
+
     private final ObservableList<RequirementsSummaryViewModel> checklist = FXCollections.observableArrayList();
 
     public ObservableList<RequirementsSummaryViewModel> getChecklist() { return checklist; }
@@ -32,4 +37,20 @@ public class RequirementsChecklistViewModel {
                 "136123123125", "Salaysay", "Kian", "Bautista",
                 false, false, false, false, false, false, false)));
     }
+
+    public FilteredList<RequirementsSummaryViewModel> searchStudentByName() {
+        FilteredList<RequirementsSummaryViewModel> filteredList = new FilteredList<>(checklist);
+
+        filteredList.setPredicate(r -> {
+            String searchText = searchValue.get().toLowerCase();
+            String firstname = r.firstNameProperty().get().toLowerCase();
+            String lastname = r.lastNameProperty().get().toLowerCase();
+
+            return firstname.contains(searchText) || lastname.contains(searchText);
+        });
+
+        return filteredList;
+    }
+
+    public StringProperty searchValueProperty() { return searchValue; }
 }

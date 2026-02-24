@@ -1,0 +1,37 @@
+.main-vbox .title-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.375em;
+}
+
+.main-vbox .sub-vbox {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
+}
+
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #B9B9B9;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: lightgray;
+}
+
+.table-row-cell:hover .table-cell {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover .separator .line {
+    -fx-border-color: transparent;
+}
+
+.main-vbox .sub-vbox .header .header-title {
+    -fx-font-size: 16;
+}
+
+.main-vbox .sub-vbox .header .searchbar {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0;
+    -fx-border-color: #ABABAB;
+}

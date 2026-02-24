@@ -40,6 +40,8 @@ public class RequirementsController {
         viewModel.loadSampleData();
 
         requirementsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        requirementsTable.setFocusTraversable(false);
+        requirementsTable.setFocusModel(null);
     }
 
     private void setupSearchBar() {
@@ -51,6 +53,10 @@ public class RequirementsController {
         searchField.setPrefWidth(236);
         searchField.setMaxWidth(Region.USE_COMPUTED_SIZE);
         searchField.setMaxHeight(27);
+        searchField.textProperty().bindBidirectional(viewModel.searchValueProperty());
+        searchField.setOnAction(event -> {
+            viewModel.searchStudentByName();
+        });
 
         ImageView searchIcon = new ImageView(
                 new Image(Objects.requireNonNull(

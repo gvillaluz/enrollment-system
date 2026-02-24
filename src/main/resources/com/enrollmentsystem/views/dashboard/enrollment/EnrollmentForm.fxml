@@ -21,7 +21,7 @@
 <?import javafx.scene.shape.SVGPath?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="615.0" prefWidth="911.0" styleClass="root" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.enrollment.EnrollmentFormController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="657.0" prefWidth="946.0" styleClass="root" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.enrollment.EnrollmentFormController">
    <children>
       <BorderPane maxHeight="450.0" maxWidth="700.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="745.0" styleClass="dialog">
          <top>
@@ -46,7 +46,7 @@
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" styleClass="main-content" BorderPane.alignment="CENTER">
                <children>
-                  <TabPane prefHeight="200.0" prefWidth="200.0" styleClass=".tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                  <TabPane fx:id="enrollmentPane" prefHeight="200.0" prefWidth="200.0" styleClass=".tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                      <tabs>
                         <Tab text="LEARNER INFORMATION">
                            <content>
@@ -55,18 +55,18 @@
                                     <VBox prefHeight="181.0" prefWidth="100.0" styleClass="vbox" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                                        <children>
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
-                                             <children>
-                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="LRN:" />
-                                                <TextField fx:id="lrnField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
-                                             </children>
                                              <padding>
                                                 <Insets left="100.0" />
                                              </padding>
+                                             <children>
+                                                <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="LRN:" />
+                                                <TextField fx:id="lrnField" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                             </children>
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Last Name:" />
-                                                <TextField fx:id="lastnameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                                <TextField fx:id="lastnameField" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -75,7 +75,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="First Name:" />
-                                                <TextField fx:id="firstnameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                                <TextField fx:id="firstnameField" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -84,7 +84,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Middle Name:" />
-                                                <TextField fx:id="middlenameField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                                <TextField fx:id="middlenameField" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -93,7 +93,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Extension Name:" />
-                                                <TextField fx:id="extensionField11" prefHeight="25.0" prefWidth="524.0" promptText="(if applicable)" styleClass="fields" />
+                                                <TextField fx:id="extensionField" prefHeight="25.0" prefWidth="524.0" promptText="(if applicable)" styleClass="fields" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -102,7 +102,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Birthdate:" />
-                                                <DatePicker fx:id="dateField11" prefHeight="25.0" prefWidth="524.0" promptText="dd/mm/yyyy" styleClass="date-picker" />
+                                                <DatePicker fx:id="dateField" prefHeight="25.0" prefWidth="524.0" promptText="dd/mm/yyyy" styleClass="date-picker" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -111,7 +111,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Age:" />
-                                                <TextField fx:id="ageField11" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
+                                                <TextField fx:id="ageField" prefHeight="25.0" prefWidth="524.0" styleClass="fields" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -120,7 +120,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="716.0" spacing="10.0" VBox.vgrow="ALWAYS">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="130.0" styleClass="field-labels" text="Sex:" />
-                                                <ComboBox fx:id="sexDropdown11" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select one&gt;" styleClass="dropdown" />
+                                                <ComboBox fx:id="sexDropdown" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select one&gt;" styleClass="dropdown" />
                                              </children>
                                              <padding>
                                                 <Insets left="100.0" />
@@ -226,7 +226,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Track:" />
-                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select track&gt;" styleClass="dropdown" />
+                                                <ComboBox fx:id="trackDropdown" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select track&gt;" styleClass="dropdown" />
                                              </children>
                                              <padding>
                                                 <Insets left="70.0" />
@@ -235,7 +235,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Strand:" />
-                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select strand&gt;" styleClass="dropdown" />
+                                                <ComboBox fx:id="strandDropdown" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select strand&gt;" styleClass="dropdown" />
                                              </children>
                                              <padding>
                                                 <Insets left="70.0" />
@@ -244,7 +244,7 @@
                                           <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                                              <children>
                                                 <Label alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="field-labels" text="Section:" />
-                                                <ComboBox prefHeight="25.0" prefWidth="524.0" promptText="&lt;select section&gt;" styleClass="dropdown" />
+                                                <ComboBox fx:id="sectionDropdown" prefHeight="25.0" prefWidth="524.0" promptText="&lt;select section&gt;" styleClass="dropdown" />
                                              </children>
                                              <padding>
                                                 <Insets left="70.0" />
@@ -393,13 +393,13 @@
                   </TabPane>
                   <HBox alignment="CENTER" prefHeight="34.0" prefWidth="600.0">
                      <children>
-                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="back-btn" text="Back">
+                        <Button fx:id="backBtn" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#backTab" styleClass="back-btn" text="Back">
                            <padding>
                               <Insets left="5.0" right="5.0" />
                            </padding>
                         </Button>
                         <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="clear-btn" text="Clear">
+                        <Button fx:id="clearBtn" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#clearTabFields" styleClass="clear-btn" text="Clear">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -407,7 +407,7 @@
                               <Insets left="5.0" right="5.0" />
                            </padding>
                         </Button>
-                        <Button minHeight="29.0" minWidth="95.0" mnemonicParsing="false" styleClass="next-btn" text="Next">
+                        <Button fx:id="nextBtn" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#nextTab" styleClass="next-btn" text="Next">
                            <padding>
                               <Insets left="5.0" right="5.0" />
                            </padding>

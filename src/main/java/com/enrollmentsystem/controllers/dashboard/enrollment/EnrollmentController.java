@@ -1,6 +1,7 @@
 package com.enrollmentsystem.controllers.dashboard.enrollment;
 
 import com.enrollmentsystem.controllers.BaseController;
+import com.enrollmentsystem.enums.EnrollmentStatus;
 import com.enrollmentsystem.utils.ViewNavigator;
 import com.enrollmentsystem.viewmodels.enrollment.EnrollmentSummaryViewModel;
 import com.enrollmentsystem.viewmodels.enrollment.EnrollmentViewModel;
@@ -14,7 +15,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import org.controlsfx.control.action.Action;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import java.util.Objects;
@@ -23,20 +23,12 @@ public class EnrollmentController {
     @FXML private Label title;
     @FXML private HBox searchbarContainer;
     @FXML private TableView<EnrollmentSummaryViewModel> enrollmentTable;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> lrnCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> lastnameCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> firstnameCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> middlenameCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> ayCol;
+    @FXML private TableColumn<EnrollmentSummaryViewModel, String> lrnCol, lastnameCol, firstnameCol, middlenameCol, ayCol, termCol, trackCol, strandCol, sectionCol;
     @FXML private TableColumn<EnrollmentSummaryViewModel, Integer> gradeCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> termCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> trackCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> strandCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> sectionCol;
-    @FXML private TableColumn<EnrollmentSummaryViewModel, String> statusCol;
+    @FXML private TableColumn<EnrollmentSummaryViewModel, EnrollmentStatus> statusCol;
     @FXML private TableColumn<EnrollmentSummaryViewModel, Void> actionCol;
 
-    private final EnrollmentViewModel viewmodel = new EnrollmentViewModel();
+    private final EnrollmentViewModel viewModel = new EnrollmentViewModel();
     private int gradeLevel;
 
     @FXML
@@ -50,9 +42,10 @@ public class EnrollmentController {
         setTableColumns();
         setupActionColumn();
 
-        viewmodel.loadData();
-        var list = viewmodel.getEnrollmentList();
-        enrollmentTable.setItems(list);
+        viewModel.loadData();
+        enrollmentTable.setItems(viewModel.getEnrollmentList(gradeLevel));
+        enrollmentTable.setFocusModel(null);
+        enrollmentTable.setFocusTraversable(false);
     }
 
     private void setSearchBar() {
@@ -76,6 +69,11 @@ public class EnrollmentController {
         iconContainer.setPadding(new javafx.geometry.Insets(0, 5, 0, 5));
 
         searchField.setLeft(iconContainer);
+        searchField.textProperty().bindBidirectional(viewModel.searchValueProperty());
+
+        searchField.setOnAction(event -> {
+            enrollmentTable.setItems(viewModel.searchStudentByName(gradeLevel));
+        });
 
         Button addStudentBtn = new Button("Add New");
         addStudentBtn.getStyleClass().add("addStudentBtn");
@@ -99,6 +97,18 @@ public class EnrollmentController {
         strandCol.setCellValueFactory(cell -> cell.getValue().strandProperty());
         sectionCol.setCellValueFactory(cell -> cell.getValue().sectionProperty());
         statusCol.setCellValueFactory(cell -> cell.getValue().statusProperty());
+        statusCol.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(EnrollmentStatus status, boolean empty) {
+                super.updateItem(status, empty);
+
+                if (empty || status == null) {
+                    setText(null);
+                } else {
+                    setText(status.getStatus());
+                }
+            }
+        });
 
         lastnameCol.prefWidthProperty().bind(enrollmentTable.widthProperty().multiply(0.13));
         firstnameCol.prefWidthProperty().bind(enrollmentTable.widthProperty().multiply(0.13));

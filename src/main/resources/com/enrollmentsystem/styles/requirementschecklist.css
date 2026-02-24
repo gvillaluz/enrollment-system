@@ -10,7 +10,7 @@
 .main-vbox .table-vbox,
 .main-vbox .footer {
     -fx-background-color: #FFFFFF;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
 }
 
 .main-vbox .table-vbox {
@@ -20,4 +20,10 @@
 
 .main-vbox .footer .legend {
     -fx-text-fill: red;
+}
+
+.searchbar {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0;
+    -fx-border-color: #ABABAB;
 }

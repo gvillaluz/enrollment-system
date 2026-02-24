@@ -1,14 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.enrollmentsystem.controllers.dashboard.admin.ArchiveController"
-            prefHeight="400.0" prefWidth="600.0">
-
+<AnchorPane prefHeight="740.0" prefWidth="1371.0" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.admin.ArchiveController">
+    <children>
+        <ScrollPane fitToWidth="true" layoutX="349.0" layoutY="124.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+            <content>
+                <VBox prefHeight="595.0" prefWidth="1060.0" styleClass="main-vbox">
+                    <children>
+                        <Label styleClass="title-label" text="Archived Records">
+                            <VBox.margin>
+                                <Insets bottom="10.0" />
+                            </VBox.margin>
+                        </Label>
+                        <VBox prefHeight="200.0" prefWidth="100.0" styleClass="sub-vbox" VBox.vgrow="ALWAYS">
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                            </padding>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="1269.0" styleClass="header">
+                           <children>
+                              <Label fx:id="subtitle" styleClass="header-title" text="Section Records" />
+                              <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                              <HBox fx:id="searchContainer" alignment="CENTER_RIGHT" prefHeight="53.0" prefWidth="225.0" styleClass="search-container" />
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="20.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <TableView fx:id="archiveTable" prefWidth="200.0">
+                          <columns>
+                            <TableColumn fx:id="lrnCol" maxWidth="200.0" minWidth="100.0" prefWidth="152.0" sortable="false" text="LRN" />
+                            <TableColumn fx:id="lastNameCol" maxWidth="200.0" minWidth="100.0" prefWidth="152.0" sortable="false" text="LAST NAME" />
+                              <TableColumn fx:id="firstNameCol" maxWidth="200.0" minWidth="100.0" prefWidth="149.0" sortable="false" text="FIRST NAME" />
+                              <TableColumn fx:id="middleNameCol" maxWidth="200.0" minWidth="100.0" prefWidth="145.0" sortable="false" text="MIDDLE NAME" />
+                              <TableColumn fx:id="ayCol" maxWidth="150.0" minWidth="50.0" prefWidth="94.0" sortable="false" text="A.Y." />
+                              <TableColumn fx:id="yearLevelCol" maxWidth="160.0" minWidth="70.0" prefWidth="103.0" sortable="false" text="YEAR LEVEL" />
+                              <TableColumn fx:id="termCol" maxWidth="150.0" minWidth="70.0" prefWidth="114.0" sortable="false" text="TERM" />
+                              <TableColumn fx:id="trackCol" maxWidth="120.0" minWidth="80.0" prefWidth="125.0" sortable="false" text="TRACK" />
+                              <TableColumn fx:id="strandCol" maxWidth="200.0" minWidth="90.0" prefWidth="122.0" sortable="false" text="STRAND" />
+                              <TableColumn fx:id="statusCol" maxWidth="-1.0" minWidth="-1.0" prefWidth="-1.0" sortable="false" text="STATUS" />
+                              <TableColumn fx:id="actionCol" maxWidth="184.0" minWidth="184.0" prefWidth="184.0" sortable="false" text="ACTION" />
+                          </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                        </TableView>
+                     </children>
+                        </VBox>
+                    </children>
+                    <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                    </padding>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </children>
 </AnchorPane>

@@ -1,0 +1,76 @@
+.main-vbox .title-label {
+    -fx-font-size: 1.375em;
+    -fx-font-weight: bold;
+}
+
+.main-vbox .add-row .add-container,
+.main-vbox .record-container {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
+}
+
+.main-vbox .add-row .add-container .add-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.375em;
+}
+
+.add-container .field-container .labels {
+    -fx-font-size: 14;
+}
+
+.add-container .field-container .fields {
+    -fx-background-color: transparent;
+    -fx-border-color: #ABABAB;
+    -fx-border-radius: 0;
+}
+
+.add-container .save-add-btn {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FAFAFA;
+    -fx-pref-width: 148;
+    -fx-pref-height: 29;
+    -fx-background-color: #6988AC;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-cursor: hand;
+}
+
+.add-container .save-add-btn:hover {
+    -fx-background-color: #90ABCA;
+}
+
+.record-container .record-title {
+    -fx-font-size: 16;
+}
+
+.btn-action {
+    -fx-underline: true;
+    -fx-font-weight: bold;
+    -fx-font-size: 0.875em;
+    -fx-cursor: hand;
+}
+
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #B9B9B9;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: lightgray;
+}
+
+.table-row-cell:hover .table-cell {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover .separator .line {
+    -fx-border-color: transparent;
+}
+
+.status-link {
+    -fx-underline: true;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
