@@ -1,39 +1,43 @@
 package com.enrollmentsystem.controllers.dashboard.academic;
 
+import com.enrollmentsystem.App;
+import com.enrollmentsystem.utils.NotificationHelper;
+import com.enrollmentsystem.utils.ViewNavigator;
 import com.enrollmentsystem.viewmodels.academic.StrandManagementViewModel;
 import com.enrollmentsystem.viewmodels.academic.StrandViewModel;
-import com.enrollmentsystem.viewmodels.academic.TrackViewModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class StrandManagementController {
-    @FXML private ComboBox<String> trackCodeSelect;
-    @FXML private TextField strandCodeField, descriptionField;
-
     @FXML private TableView<StrandViewModel> strandTable;
     @FXML private TableColumn<StrandViewModel, Integer> idCol;
     @FXML private TableColumn<StrandViewModel, String> strandCodeCol, descriptionCol, trackCodeCol;
     @FXML private TableColumn<StrandViewModel, Void> actionCol;
 
     private final StrandManagementViewModel viewModel = new StrandManagementViewModel();
-    StrandViewModel formInstance = viewModel.getFormViewModel();
 
     @FXML
     private void initialize() {
-        //trackCodeSelect.valueProperty().bindBidirectional(formInstance.trackCodeProperty());
-        strandCodeField.textProperty().bindBidirectional(formInstance.strandCodeProperty());
-        descriptionField.textProperty().bindBidirectional(formInstance.descriptionProperty());
-
-        trackCodeSelect.setValue(null);
-
         setupTable();
         setupActionColumn();
 
         viewModel.loadStrands();
         strandTable.setItems(viewModel.getStrands());
     }
+
+    @FXML
+    private void openAddModal() { loadModal(null); }
 
     private void setupTable() {
         idCol.setCellValueFactory(cell -> cell.getValue().strandIdProperty().asObject());
@@ -53,13 +57,13 @@ public class StrandManagementController {
                         return new TableCell<>() {
 
                             // 1. Create Labels
-                            private final Label editLbl = new Label("Edit");
-                            private final Label archiveLbl = new Label("Delete");
+                            private final FontIcon editIcon = new FontIcon("fas-edit");
+                            private final FontIcon deleteIcon = new FontIcon("fas-trash-alt");
 
                             // 2. Create Containers (HBoxes) for the labels
                             //    This allows the whole "box" to be clickable, not just the text.
-                            private final HBox editBox = new HBox(editLbl);
-                            private final HBox archiveBox = new HBox(archiveLbl);
+                            private final HBox editBox = new HBox(editIcon);
+                            private final HBox archiveBox = new HBox(deleteIcon);
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
                             private final HBox pane = new HBox(editBox, separator, archiveBox);
 
@@ -74,8 +78,8 @@ public class StrandManagementController {
                                 editBox.setMaxWidth(Double.MAX_VALUE);
                                 archiveBox.setMaxWidth(Double.MAX_VALUE);
 
-                                editLbl.getStyleClass().add("btn-action");
-                                archiveLbl.getStyleClass().add("btn-action");
+                                editIcon.getStyleClass().add("btn-action");
+                                deleteIcon.getStyleClass().add("btn-action");
 
                                 pane.setSpacing(0);
 
@@ -108,11 +112,68 @@ public class StrandManagementController {
         actionCol.setCellFactory(cellFactory);
     }
 
-    @FXML public void saveStrand() {
-        viewModel.saveStrand();
+    @FXML private void handleEdit(StrandViewModel strand) { loadModal(strand); }
+
+    private void loadModal(StrandViewModel strand) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/academic/StrandForm.fxml"));
+            Parent modalContent = loader.load();
+            Stage owner = (Stage) strandTable.getScene().getWindow();
+
+            Runnable refreshTable = viewModel::loadStrands;
+
+            StrandFormController controller = loader.getController();
+            controller.setOnSaveSuccess(refreshTable);
+            controller.setViewModel(viewModel);
+            controller.setEditStrand(strand);
+
+            if (strand != null) controller.setEditStrand(strand);
+
+            modalContent.getStylesheets().add(
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/form.css")).toExternalForm()
+            );
+
+            ViewNavigator.showModal(modalContent, owner);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    @FXML private void handleEdit(StrandViewModel strand) {}
+    @FXML private void handleDelete(StrandViewModel strand) {
+        Window currentStage = strandTable.getScene().getWindow();
+        Runnable onConfirmDelete = () -> {
+            viewModel.deleteStrand(strand)
+                    .thenAccept(success -> {
+                        Platform.runLater(() -> {
+                            if (success) {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Strand successfully deleted.",
+                                        "success"
+                                );
+                            } else {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Failed to delete strand.",
+                                        "error"
+                                );
+                            }
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 
-    @FXML private void handleDelete(StrandViewModel strand) {}
+                        Platform.runLater(() -> {
+                            NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                        });
+
+                        return null;
+                    });
+        };
+
+        ViewNavigator.showDeleteModal(
+                (Stage) currentStage,
+                onConfirmDelete
+        );
+    }
 }

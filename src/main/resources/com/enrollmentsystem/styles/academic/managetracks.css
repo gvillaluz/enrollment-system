@@ -44,11 +44,18 @@
     -fx-font-size: 16;
 }
 
-.btn-action {
-    -fx-underline: true;
-    -fx-font-weight: bold;
-    -fx-font-size: 0.875em;
+.edit-icon,
+.delete-icon {
+    -fx-icon-color: #333333;
     -fx-cursor: hand;
+}
+
+.edit-icon:hover {
+    -fx-icon-color: #6988AC;
+}
+
+.delete-icon:hover {
+    -fx-icon-color: #C53434;
 }
 
 .table-view {
@@ -66,5 +73,23 @@
 }
 
 .table-row-cell:hover .separator .line {
-    -fx-border-color: transparent; /* Match your orange theme on hover */
+    -fx-border-color: transparent;
+}
+
+.edit-modal {
+    -fx-background-color: #FAFAFA;
+}
+
+.addTrackBtn {
+    -fx-background-color: #6988AC;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.addTrackBtn:hover {
+    -fx-background-color: #90ABCA;
 }

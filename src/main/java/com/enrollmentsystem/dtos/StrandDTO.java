@@ -6,21 +6,17 @@ public class StrandDTO {
     private String description;
     private int trackId;
     private String trackCode;
+    private boolean isArchived;
 
-    public StrandDTO() {
-        strandId = 0;
-        strandCode = null;
-        description = null;
-        trackId = 0;
-        trackCode = null;
-    }
+    public StrandDTO() {}
 
-    public StrandDTO(int strandId, String strandCode, String description, int trackId, String trackCode) {
+    public StrandDTO(int strandId, String strandCode, String description, int trackId, String trackCode, boolean isArchived) {
         this.strandId = strandId;
         this.strandCode = strandCode;
         this.description = description;
         this.trackId = trackId;
         this.trackCode = trackCode;
+        this.isArchived = isArchived;
     }
 
     public int getStrandId() { return strandId; }
@@ -37,4 +33,7 @@ public class StrandDTO {
 
     public String getTrackCode() { return trackCode; }
     public void setTrackCode(String trackCode) { this.trackCode = trackCode; }
+
+    public boolean isArchived() { return isArchived; }
+    public void setArchived(boolean isArchived) { this.isArchived = isArchived; }
 }

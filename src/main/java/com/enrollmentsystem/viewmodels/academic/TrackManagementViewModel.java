@@ -1,54 +1,55 @@
 package com.enrollmentsystem.viewmodels.academic;
 
+import com.enrollmentsystem.config.AppContext;
 import com.enrollmentsystem.dtos.TrackDTO;
+import com.enrollmentsystem.services.TrackService;
+import com.enrollmentsystem.utils.ValidationHelper;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.concurrent.CompletableFuture;
+
 public class TrackManagementViewModel {
-    private final TrackViewModel trackViewModel = new TrackViewModel(new TrackDTO());
+    private final TrackService _service = AppContext.getTrackService();
     private final ObservableList<TrackViewModel> tracks = FXCollections.observableArrayList();
 
-    public TrackViewModel getNewTrackForm() { return trackViewModel; }
     public ObservableList<TrackViewModel> getTracks() { return tracks; }
 
     public void loadTracks() {
-        var dummy1 = new TrackDTO(1, "Academics", "Academics");
-        var dummy2 = new TrackDTO(2, "Tech-voc", "Technical Vocational");
-
-        tracks.addAll(
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2),
-                new TrackViewModel(dummy1),
-                new TrackViewModel(dummy2)
-        );
+        tracks.clear();
+        _service.loadTracks()
+                .thenAccept(trackDTOS -> {
+                    Platform.runLater(() -> {
+                        for (TrackDTO dto : trackDTOS) {
+                            tracks.add(new TrackViewModel(dto));
+                        }
+                    });
+                })
+                .exceptionally(ex -> {
+                    ex.printStackTrace();
+                    System.out.println("Error in loading tracks: " + ex.getMessage());
+                    return null;
+                });
     }
 
-    public void saveTrack() {
-        System.out.println(trackViewModel.trackCodeProperty().get());
-        System.out.println(trackViewModel.descriptionProperty().get());
-        trackViewModel.trackCodeProperty().set("");
-        trackViewModel.descriptionProperty().set("");
+
+
+    public CompletableFuture<Boolean> deleteTrack(TrackViewModel track) {
+        int trackId = track.trackIdProperty().get();
+
+        if (trackId <= 0) {
+            return CompletableFuture.failedFuture(
+                    new IllegalArgumentException("No track is selected")
+            );
+        }
+
+        return _service.deleteTrack(trackId)
+                .thenApply(success -> {
+                    if (success) {
+                        Platform.runLater(this::loadTracks);
+                    }
+                    return success;
+                });
     }
 }

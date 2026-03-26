@@ -27,10 +27,6 @@
     -fx-background-radius: 0;
 }
 
-.table-columns {
-    -fx-padding: 5px;
-}
-
 .table-view {
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
@@ -54,4 +50,16 @@
     -fx-font-weight: bold;
     -fx-font-size: 0.875em;
     -fx-cursor: hand;
+}
+
+.pagination .number-button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 2;
 }

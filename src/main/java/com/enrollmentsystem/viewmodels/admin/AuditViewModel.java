@@ -26,7 +26,6 @@ public class AuditViewModel {
         this.timestamp = new SimpleObjectProperty<>(dto.getTimestamp());
     }
 
-    // --- PROPERTY GETTERS (For TableView Binds) ---
     public IntegerProperty logIdProperty() { return logId; }
     public IntegerProperty userIdProperty() { return userId; }
     public StringProperty usernameProperty() { return username; }

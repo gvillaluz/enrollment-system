@@ -74,3 +74,17 @@
 .table-row-cell:hover .separator .line {
     -fx-border-color: transparent; /* Match your orange theme on hover */
 }
+
+.addTrackBtn {
+    -fx-background-color: #6988AC;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.addTrackBtn:hover {
+    -fx-background-color: #90ABCA;
+}

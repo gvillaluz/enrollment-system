@@ -1,0 +1,152 @@
+.titlebar {
+    -fx-background-color: #EF7707;
+}
+
+.right-titlebar .title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FAFAFA;
+}
+
+.left-titlebar .title-greetings {
+    -fx-font-size: 20px;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+}
+
+.sidebar-container {
+    -fx-background-color: #FAFAFA;
+    -fx-border-color: rgba(0, 0, 0, 0.25);
+    -fx-border-width: 0 1 0 0;
+}
+
+.sidebar {
+    -fx-background-color: #FAFAFA;
+}
+
+.sidebar-btns {
+    -fx-padding: 0.5em 1em 0.5em 1.2em;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.dropdown {
+    -fx-padding: 0.7em 1.5em 0.7em 1.5em;
+}
+
+.sidebar-btns.add-grade-student {
+    -fx-padding: 0.5em 1em 0.5em 2em;
+}
+
+.sidebar-btns:hover {
+    -fx-background-color: #D9D9D9;
+}
+
+.sidebarScroll {
+    -fx-background-color: #FAFAFA;
+}
+
+.scroll-pane {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+}
+
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+.scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 10;
+}
+
+.admin-container,
+.user-container {
+    -fx-background-color: #FAFAFA;
+}
+
+.active {
+    -fx-background-color: #D9D9D9;
+}
+
+.administration-label {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0466C8;
+}
+
+.separator .line {
+    -fx-border-color: #03002e;
+    -fx-border-width: 0.5;
+    -fx-opacity: 30%;
+}
+
+.username-label,
+.role-label {
+    -fx-font-size: 14;
+}
+
+.username-label {
+    -fx-font-weight: bold;
+}
+
+.logout-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #780000;
+    -fx-border-radius: 0;
+    -fx-text-fill: #780000;
+    -fx-font-size: 14;
+    -fx-padding: 0;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.logout-btn:hover {
+    -fx-background-color: #780000;
+    -fx-text-fill: #FAFAFA;
+}
+
+.notification-bar {
+    -fx-translate-y: 20;
+}
+
+.notification-bar > .pane {
+    -fx-padding: 15;
+}
+
+.notification-bar > .pane > .close-button {
+    -fx-alignment: CENTER_RIGHT !important;
+}
+
+.notification-bar > .pane > .close-button:hover {
+    -fx-background-color: transparent;
+}
+
+.notification-bar > .pane > .close-button > .graphic {
+    -fx-scale-x: 2;
+    -fx-scale-y: 2;
+    -fx-background-color: #FAFAFA;
+    -fx-translate-y: 1.5;
+}
+
+.notification-bar.success .label,
+.notification-bar.error .label {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FAFAFA;
+    -fx-graphic-text-gap: 15;
+}
+
+.notification-bar.success > .pane {
+    -fx-background-color: #1D7C4D;
+}
+
+.notification-bar.error > .pane {
+    -fx-background-color: #C53434;
+}
+
+.notification-bar > .label > .image-view {
+    -fx-margin: 0 10 0 0;
+}

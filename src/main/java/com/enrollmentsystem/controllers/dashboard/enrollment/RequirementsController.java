@@ -1,8 +1,12 @@
 package com.enrollmentsystem.controllers.dashboard.enrollment;
 
+import com.enrollmentsystem.utils.ValidationHelper;
 import com.enrollmentsystem.viewmodels.enrollment.RequirementsChecklistViewModel;
 import com.enrollmentsystem.viewmodels.enrollment.RequirementsSummaryViewModel;
+import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.CheckBoxTableCell;
@@ -11,12 +15,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 import org.controlsfx.control.textfield.CustomTextField;
 
 import java.util.Objects;
 
 public class RequirementsController {
     private final RequirementsChecklistViewModel viewModel = new RequirementsChecklistViewModel();
+    private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
 
     @FXML private HBox searchContainer;
     @FXML private TableView<RequirementsSummaryViewModel> requirementsTable;
@@ -32,12 +38,13 @@ public class RequirementsController {
     @FXML private TableColumn<RequirementsSummaryViewModel, Boolean> formsCol;
     @FXML private TableColumn<RequirementsSummaryViewModel, Boolean> alsCol;
 
+    @FXML private Pagination pagination;
+
     @FXML
     public void initialize() {
         setupSearchBar();
         setupTable();
-
-        viewModel.loadSampleData();
+        setupPagination();
 
         requirementsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         requirementsTable.setFocusTraversable(false);
@@ -54,8 +61,17 @@ public class RequirementsController {
         searchField.setMaxWidth(Region.USE_COMPUTED_SIZE);
         searchField.setMaxHeight(27);
         searchField.textProperty().bindBidirectional(viewModel.searchValueProperty());
-        searchField.setOnAction(event -> {
-            viewModel.searchStudentByName();
+
+        searchDebounce.setOnFinished(event -> {
+            if (pagination.getCurrentPageIndex() == 0) {
+                viewModel.loadChecklist(0);
+            } else {
+                pagination.setCurrentPageIndex(0);
+            }
+        });
+
+        viewModel.searchValueProperty().addListener((obs, oldVal, newVal) -> {
+            searchDebounce.playFromStart();
         });
 
         ImageView searchIcon = new ImageView(
@@ -104,16 +120,15 @@ public class RequirementsController {
         lastnameCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(0.12));
         firstnameCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(0.12));
         middlenameCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(0.12));
-
-        double checkWeight = 0.065;
-        beefCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        sf9Col.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        psaCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        gmcCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        auCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        formsCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-        alsCol.prefWidthProperty().bind(requirementsTable.widthProperty().multiply(checkWeight));
-
         requirementsTable.setItems(viewModel.getChecklist());
+    }
+
+    private void setupPagination() {
+        pagination.pageCountProperty().bind(viewModel.totalPagesProperty());
+
+        pagination.setPageFactory(pageIndex -> {
+            viewModel.loadChecklist(pageIndex);
+            return requirementsTable;
+        });
     }
 }

@@ -19,7 +19,7 @@ public class App extends Application {
         Scene scene = new Scene(fxmlLoader.load());
 
         scene.getStylesheets().add(
-                Objects.requireNonNull(App.class.getResource("styles/login.css")).toExternalForm()
+                Objects.requireNonNull(App.class.getResource("styles/login/login.css")).toExternalForm()
         );
 
         stage.setScene(scene);

@@ -1,4 +1,4 @@
-package com.enrollmentsystem.controllers;
+package com.enrollmentsystem.controllers.base;
 
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.utils.ViewNavigator;

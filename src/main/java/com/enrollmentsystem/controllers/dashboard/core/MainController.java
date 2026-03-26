@@ -1,30 +1,29 @@
 package com.enrollmentsystem.controllers.dashboard.core;
 
-import com.enrollmentsystem.controllers.BaseController;
+import com.enrollmentsystem.controllers.base.BaseController;
+import com.enrollmentsystem.models.User;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.utils.ViewNavigator;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class MainController extends BaseController {
-    @FXML
-    private BorderPane root;
-    @FXML
-    private HBox addStudentBtn;
-    @FXML
-    private VBox subMenuBtns;
-    @FXML
-    private ImageView arrowIcon;
-    @FXML
-    private Label welcomeLabel;
-    @FXML
-    private Button dashboardButton;
+    @FXML private BorderPane root;
+    @FXML private HBox addStudentBtn;
+    @FXML private ImageView arrowIcon;
+    @FXML private Label welcomeLabel, usernameLabel, roleLabel;
+    @FXML private Button dashboardButton;
+
+    @FXML private ScrollPane scrollPane;
+
+    @FXML private VBox adminTabs, userInfoContainer, subMenuBtns;
 
     private Button activeButton;
 
@@ -33,20 +32,13 @@ public class MainController extends BaseController {
         BaseController.setSession(UserSession.getInstance());
         BaseController.setRoot(root);
 
-        welcomeLabel.setText("Welcome, " + BaseController.session.getUser().getFirstName() + "!");
+        if (!BaseController.session.isAdmin()) {
+            adminTabs.setVisible(false);
+            adminTabs.setManaged(false);
+        }
 
-        dashboardButton.getStyleClass().add("active");
-        ViewNavigator.switchContent(getFolderFor(dashboardButton.getId()), dashboardButton.getId(), root);
-        activeButton = dashboardButton;
-
-        subMenuBtns.setVisible(false);
-        subMenuBtns.setManaged(false);
-        addStudentBtn.setOnMouseClicked(event -> {
-            boolean isVisible = subMenuBtns.isVisible();
-            subMenuBtns.setVisible(!isVisible);
-            subMenuBtns.setManaged(!isVisible);
-            arrowIcon.setRotate(!isVisible ? 90 : 0);
-        });
+        setupLabels();
+        setupTabs();
     }
 
     @FXML
@@ -76,6 +68,28 @@ public class MainController extends BaseController {
     @FXML
     private void logoutUser() {
         BaseController.logout();
+    }
+
+    private void setupLabels() {
+        User user = BaseController.session.getUser();
+        welcomeLabel.setText("Welcome, " + user.getFirstName() + "!");
+        usernameLabel.setText(user.getFirstName() + " " + user.getLastName());
+        roleLabel.setText(user.getRole().getValue());
+    }
+
+    private void setupTabs() {
+        dashboardButton.getStyleClass().add("active");
+        ViewNavigator.switchContent(getFolderFor(dashboardButton.getId()), dashboardButton.getId(), root);
+        activeButton = dashboardButton;
+
+        subMenuBtns.setVisible(false);
+        subMenuBtns.setManaged(false);
+        addStudentBtn.setOnMouseClicked(event -> {
+            boolean isVisible = subMenuBtns.isVisible();
+            subMenuBtns.setVisible(!isVisible);
+            subMenuBtns.setManaged(!isVisible);
+            arrowIcon.setRotate(!isVisible ? 90 : 0);
+        });
     }
 
     private String getFolderFor(String id) {

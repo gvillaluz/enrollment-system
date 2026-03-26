@@ -71,7 +71,7 @@ public class ArchiveController {
         middleNameCol.setCellValueFactory(cell -> cell.getValue().middleNameProperty());
         ayCol.setCellValueFactory(cell -> cell.getValue().academicYearProperty());
         yearLevelCol.setCellValueFactory(cell -> cell.getValue().gradeProperty().asObject());
-        termCol.setCellValueFactory(cell -> cell.getValue().termProperty());
+        termCol.setCellValueFactory(cell -> cell.getValue().termProperty().asString());
         trackCol.setCellValueFactory(cell -> cell.getValue().trackProperty());
         strandCol.setCellValueFactory(cell -> cell.getValue().strandProperty());
 

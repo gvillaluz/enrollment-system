@@ -1,5 +1,8 @@
 package com.enrollmentsystem.models;
 
+import com.enrollmentsystem.dtos.EnrollmentFormDTO;
+import com.enrollmentsystem.enums.Gender;
+
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -10,21 +13,13 @@ public class Student {
     private String middleName;
     private String extensionName;
     private LocalDate birthDate;
-    private Integer age;
-    private String sex;
-    private String placeOfBirth;
-    private String motherTongue;
-    private Boolean isIpMember;
-    private String ipCommunityName;
-    private Boolean is4PsBeneficiary;
-    private String householdId4Ps;
-    private Boolean hasDisability;
+    private int age;
+    private Gender sex;
+
+    public Student() {}
 
     public Student(String LRN, String lastName, String firstName, String middleName,
-                   String extensionName, LocalDate birthDate, Integer age, String sex,
-                   String placeOfBirth, String motherTongue, Boolean isIpMember,
-                   String ipCommunityName, Boolean is4PsBeneficiary,
-                   String householdId4Ps, Boolean hasDisability) {
+                   String extensionName, LocalDate birthDate, int age, Gender sex) {
         this.lrn = LRN;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -33,17 +28,23 @@ public class Student {
         this.birthDate = birthDate;
         this.age = age;
         this.sex = sex;
-        this.placeOfBirth = placeOfBirth;
-        this.motherTongue = motherTongue;
-        this.isIpMember = isIpMember;
-        this.ipCommunityName = ipCommunityName;
-        this.is4PsBeneficiary = is4PsBeneficiary;
-        this.householdId4Ps = householdId4Ps;
-        this.hasDisability = hasDisability;
+    }
+
+    public static Student fromDTO(EnrollmentFormDTO dto) {
+        Student student = new Student();
+        student.setLrn(dto.getLrn());
+        student.setLastName(dto.getLastName());
+        student.setFirstName(dto.getFirstName());
+        student.setMiddleName(dto.getMiddleName());
+        student.setExtensionName(dto.getExtensionName());
+        student.setBirthDate(dto.getBirthDate());
+        student.setSex(dto.getSex());
+        student.setAge(dto.getAge());
+        return student;
     }
 
     public String getLrn() { return lrn; }
-    public void setLRN(String lrn) { this.lrn = lrn; }
+    public void setLrn(String lrn) { this.lrn = lrn; }
 
     public String getLastName() { return lastName; }
     public void setLastName(String lastName) { this.lastName = lastName; }
@@ -60,30 +61,9 @@ public class Student {
     public LocalDate getBirthDate() { return birthDate; }
     public void setBirthDate(LocalDate birthDate) { this.birthDate = birthDate; }
 
-    public Integer getAge() { return age; }
-    public void setAge(Integer age) { this.age = age; }
+    public int getAge() { return age; }
+    public void setAge(int age) { this.age = age; }
 
-    public String getSex() { return sex; }
-    public void setSex(String sex) { this.sex = sex; }
-
-    public String getPlaceOfBirth() { return placeOfBirth; }
-    public void setPlaceOfBirth(String placeOfBirth) { this.placeOfBirth = placeOfBirth; }
-
-    public String getMotherTongue() { return motherTongue; }
-    public void setMotherTongue(String motherTongue) { this.motherTongue = motherTongue; }
-
-    public Boolean getIsIpMember() { return isIpMember; }
-    public void setIsIpMember(Boolean isIpMember) { this.isIpMember = isIpMember; }
-
-    public String getIpCommunityName() { return ipCommunityName; }
-    public void setIpCommunityName(String ipCommunityName) { this.ipCommunityName = ipCommunityName; }
-
-    public Boolean getIs4PsBeneficiary() { return is4PsBeneficiary; }
-    public void setIs4PsBeneficiary(Boolean is4PsBeneficiary) { this.is4PsBeneficiary = is4PsBeneficiary; }
-
-    public String getHouseholdId4Ps() { return householdId4Ps; }
-    public void setHouseholdId4Ps(String householdId4Ps) { this.householdId4Ps = householdId4Ps; }
-
-    public Boolean getHasDisability() { return hasDisability; }
-    public void setHasDisability(Boolean hasDisability) { this.hasDisability = hasDisability; }
+    public Gender getSex() { return sex; }
+    public void setSex(Gender sex) { this.sex = sex; }
 }

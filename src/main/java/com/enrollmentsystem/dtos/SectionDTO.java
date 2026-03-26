@@ -10,6 +10,7 @@ public class SectionDTO {
     private String strandCode;
     private String roomAssignment;
 
+    public SectionDTO() {}
 
     public SectionDTO(int sectionId, String sectionName, int maxCapacity, int schoolYearId,
                       String schoolYear, int strandId, String strandCode, String roomAssignment) {

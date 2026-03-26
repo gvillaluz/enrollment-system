@@ -27,3 +27,15 @@
     -fx-border-radius: 0;
     -fx-border-color: #ABABAB;
 }
+
+.pagination .number-button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 2;
+}

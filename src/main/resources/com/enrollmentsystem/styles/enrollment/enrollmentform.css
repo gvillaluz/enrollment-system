@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: rgba(0,0,0,0.4);
+    -fx-text-background-color: #FAFAFA;
 }
 
 .dialog {
@@ -23,7 +23,7 @@
 
 .dialog-title-bar .title-bar-exit {
     -fx-background-color: #FFFFFF;
-    -fx-border-color: none;
+    -fx-border-color: transparent;
     -fx-border-width: 0;
 }
 
@@ -108,7 +108,7 @@
 }
 
 .tab-pane .anchor-pane {
-    -fx-background-color: transparent;
+    -fx-background-color: #FAFAFA;
     -fx-margin: -1 0 0 0;
 }
 
@@ -149,8 +149,9 @@
     -fx-min-height: 35;
 }
 
-.date-picker > arrow-button {
-    -fx-background-color: blue;
+.date-picker > .arrow-button {
+    -fx-background-color: #D9D9D9;
+    -fx-padding: 15;
 }
 
 .tab-pane .anchor-pane .vbox .subtitles {
@@ -188,9 +189,40 @@
     -fx-border-color: #B9B9B9;
 }
 
-.anchor-pane .rows .right-row .checkboxes > .box {
+.check-box .box {
     -fx-background-color: #FAFAFA;
     -fx-border-width: 1;
     -fx-border-color: #333333;
     -fx-border-radius: 3;
+}
+
+.date-picker-popup .month-year-pane .combo-box {
+    -fx-background-color: transparent;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 4;
+    -fx-font-size: 11px;
+}
+
+.date-picker-popup .month-year-pane .combo-box:hover {
+    -fx-background-color: #F3F4F6;
+}
+
+.date-picker-popup .day-cell.secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+    -fx-opacity: 0;
+}
+
+.date-picker-popup .day-cell.secondary:hover {
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup .day-cell.today {
+    -fx-border-color: #3B82F6;
+    -fx-border-width: 2;
+}
+
+.date-picker-popup .day-cell {
+    -fx-border-color: #F3F4F6;
+    -fx-border-width: 0.1;
 }

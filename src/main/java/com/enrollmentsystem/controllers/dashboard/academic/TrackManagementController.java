@@ -1,11 +1,25 @@
 package com.enrollmentsystem.controllers.dashboard.academic;
 
+import com.enrollmentsystem.App;
+import com.enrollmentsystem.utils.NotificationHelper;
+import com.enrollmentsystem.utils.ViewNavigator;
+import com.enrollmentsystem.viewmodels.academic.TrackFormViewModel;
 import com.enrollmentsystem.viewmodels.academic.TrackManagementViewModel;
 import com.enrollmentsystem.viewmodels.academic.TrackViewModel;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
+import org.controlsfx.validation.ValidationSupport;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.io.IOException;
+import java.util.Objects;
 
 public class TrackManagementController {
     @FXML private TextField trackCodeField;
@@ -18,18 +32,19 @@ public class TrackManagementController {
     @FXML private TableColumn<TrackViewModel, Void> actionCol;
 
     private final TrackManagementViewModel viewModel = new TrackManagementViewModel();
-    private final TrackViewModel formInstance = viewModel.getNewTrackForm();
 
     @FXML
     private void initialize() {
-        trackCodeField.textProperty().bindBidirectional(formInstance.trackCodeProperty());
-        descriptionField.textProperty().bindBidirectional(formInstance.descriptionProperty());
-
         setupTable();
         setupActionColumn();
 
         viewModel.loadTracks();
         trackTable.setItems(viewModel.getTracks());
+    }
+
+    @FXML
+    private void openAddModal() {
+        loadModal(null);
     }
 
     private void setupTable() {
@@ -49,13 +64,16 @@ public class TrackManagementController {
                         return new TableCell<>() {
 
                             // 1. Create Labels
-                            private final Label editLbl = new Label("Edit");
-                            private final Label archiveLbl = new Label("Delete");
+//                            private final Label editLbl = new Label("Edit");
+//                            private final Label archiveLbl = new Label("Delete");
+
+                            private final FontIcon editIcon = new FontIcon("fas-edit");
+                            private final FontIcon deleteIcon = new FontIcon("fas-trash-alt");
 
                             // 2. Create Containers (HBoxes) for the labels
                             //    This allows the whole "box" to be clickable, not just the text.
-                            private final HBox editBox = new HBox(editLbl);
-                            private final HBox archiveBox = new HBox(archiveLbl);
+                            private final HBox editBox = new HBox(editIcon);
+                            private final HBox archiveBox = new HBox(deleteIcon);
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
                             private final HBox pane = new HBox(editBox, separator, archiveBox);
 
@@ -70,8 +88,8 @@ public class TrackManagementController {
                                 editBox.setMaxWidth(Double.MAX_VALUE);
                                 archiveBox.setMaxWidth(Double.MAX_VALUE);
 
-                                editLbl.getStyleClass().add("btn-action");
-                                archiveLbl.getStyleClass().add("btn-action");
+                                editIcon.getStyleClass().add("edit-icon");
+                                deleteIcon.getStyleClass().add("delete-icon");
 
                                 pane.setSpacing(0);
 
@@ -104,12 +122,66 @@ public class TrackManagementController {
         actionCol.setCellFactory(cellFactory);
     }
 
-    @FXML
-    public void saveTrack() {
-        viewModel.saveTrack();
+    private void handleEdit(TrackViewModel track) { loadModal(track); }
+
+    private void loadModal(TrackViewModel track) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/academic/TrackForm.fxml"));
+            Parent modalContent = loader.load();
+            Stage owner = (Stage) trackTable.getScene().getWindow();
+
+            Runnable refreshTable = viewModel::loadTracks;
+
+            TrackFormController controller = loader.getController();
+            controller.setOnSaveSuccess(refreshTable);
+            controller.setViewModel(viewModel);
+            controller.setEditTrack(track);
+
+            modalContent.getStylesheets().add(
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/form.css")).toExternalForm()
+            );
+
+            ViewNavigator.showModal(modalContent, owner);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void handleEdit(TrackViewModel track) {}
+    private void handleDelete(TrackViewModel track) {
+        Window currentStage = trackTable.getScene().getWindow();
+        Runnable onConfirmDelete = () -> {
+            viewModel.deleteTrack(track)
+                    .thenAccept(success -> {
+                        Platform.runLater(() -> {
+                            if (success) {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Track successfully deleted.",
+                                        "success"
+                                );
+                            } else {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Failed to delete track.",
+                                        "error"
+                                );
+                            }
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 
-    private void handleDelete(TrackViewModel track) {}
+                        Platform.runLater(() -> {
+                            NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                        });
+
+                       return null;
+                    });
+        };
+
+        ViewNavigator.showDeleteModal(
+                (Stage) currentStage,
+                onConfirmDelete
+        );
+    }
 }

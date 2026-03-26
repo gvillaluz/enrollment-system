@@ -1,0 +1,53 @@
+.edit-modal {
+    -fx-background-color: #FAFAFA;
+}
+
+.edit-modal .edit-title {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.edit-modal .field-labels {
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.edit-modal .fields {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-border-color: #ABABAB;
+    -fx-padding: 5 5 5 5;
+}
+
+.edit-modal .dropdown {
+    -fx-background-color: #D9D9D9;
+    -fx-border-color: #ABABAB;
+    -fx-padding: 0;
+}
+
+.saveBtn {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.cancelBtn {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.saveBtn {
+    -fx-background-color: #1F7D49;
+    -fx-text-fill: #FAFAFA;
+}
+
+.saveBtn:hover {
+    -fx-background-color: #38A86A;
+}

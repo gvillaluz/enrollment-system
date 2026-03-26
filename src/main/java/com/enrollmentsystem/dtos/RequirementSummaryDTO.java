@@ -1,6 +1,7 @@
 package com.enrollmentsystem.dtos;
 
 public class RequirementSummaryDTO {
+    private int studentRequirementId;
     private String lrn;
     private String lastName;
     private String firstName;
@@ -13,8 +14,11 @@ public class RequirementSummaryDTO {
     private Boolean form5;
     private Boolean alsCol;
 
-    public RequirementSummaryDTO(String lrn, String lastName, String firstName, String middleName,
+    public RequirementSummaryDTO() {}
+
+    public RequirementSummaryDTO(int studentRequirementId, String lrn, String lastName, String firstName, String middleName,
                                  Boolean beef, Boolean sf9, Boolean psa, Boolean gmc, Boolean au, Boolean form5, Boolean alsCol) {
+        this.studentRequirementId = studentRequirementId;
         this.lrn = lrn;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -27,6 +31,9 @@ public class RequirementSummaryDTO {
         this.form5 = form5;
         this.alsCol = alsCol;
     }
+
+    public int getStudentRequirementId() { return studentRequirementId; }
+    public void setStudentRequirementId(int studentRequirementId) { this.studentRequirementId = studentRequirementId; }
 
     public String getLrn() { return lrn; }
     public void setLrn(String lrn) { this.lrn = lrn; }

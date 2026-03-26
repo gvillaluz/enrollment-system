@@ -1,6 +1,6 @@
 package com.enrollmentsystem.controllers.dashboard.core;
 
-import com.enrollmentsystem.controllers.BaseController;
+import com.enrollmentsystem.controllers.base.BaseController;
 import com.enrollmentsystem.utils.Scroll;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class AuthService {
-    private static UserRepository _repo;
+    private final UserRepository _repo;
 
     public AuthService(UserRepository repo) {
         _repo = repo;

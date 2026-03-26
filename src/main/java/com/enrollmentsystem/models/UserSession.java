@@ -16,6 +16,10 @@ public class UserSession {
         return instance;
     }
 
+    public boolean isAdmin() {
+        return user != null && user.getRole().getValue().equals("Admin");
+    }
+
     public static void logout() {
         instance = null;
     }

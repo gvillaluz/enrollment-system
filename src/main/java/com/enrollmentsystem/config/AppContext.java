@@ -1,42 +1,65 @@
 package com.enrollmentsystem.config;
 
-import com.enrollmentsystem.repositories.EnrollmentRepository;
-import com.enrollmentsystem.repositories.StudentRepository;
-import com.enrollmentsystem.repositories.UserRepository;
-import com.enrollmentsystem.services.AuthService;
-import com.enrollmentsystem.services.EnrollmentService;
-import com.enrollmentsystem.services.StudentService;
+import com.enrollmentsystem.repositories.*;
+import com.enrollmentsystem.repositories.AuditRepository;
+import com.enrollmentsystem.services.*;
 import com.enrollmentsystem.utils.DatabaseConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class AppContext {
+    private static AcademicRepository academicRepository;
+
     private static UserRepository userRepository;
     private static StudentRepository studentRepository;
     private static EnrollmentRepository enrollmentRepository;
+    private static TrackRepository trackRepository;
+    private static StrandRepository strandRepository;
+    private static AuditRepository auditRepository;
+    private static SectionRepository sectionRepository;
+    private static SchoolYearRepository schoolYearRepository;
+    private static RequirementRepository requirementRepository;
 
     private static AuthService authService;
     private static StudentService studentService;
     private static EnrollmentService enrollmentService;
+    private static TrackService trackService;
+    private static StrandService strandService;
+    private static AuditService auditService;
+    private static SectionService sectionService;
+    private static RequirementService requirementService;
 
-    private static Connection connection;
-
-    private static Connection getConnection() {
-        if (connection == null) {
-            try {
-                connection = DatabaseConnection.getConnection();
-            } catch (SQLException e) {
-                throw new RuntimeException("Connection Error: ", e);
-            }
+    public static AcademicRepository getAcademicRepository() {
+        if (academicRepository == null) {
+            academicRepository = new AcademicRepository();
         }
-        return connection;
+        return academicRepository;
     }
 
-    // Users
+
+    public static RequirementRepository getRequirementRepository() {
+        if (requirementRepository == null) {
+            requirementRepository = new RequirementRepository();
+        }
+        return requirementRepository;
+    }
+
+    public static RequirementService getRequirementService() {
+        if (requirementService == null) {
+            requirementService = new RequirementService(
+                    getRequirementRepository(),
+                    getSchoolYearRepository(),
+                    getAuditRepository()
+            );
+        }
+        return requirementService;
+    }
+
+
     private static UserRepository getUserRepository() {
         if (userRepository == null) {
-            userRepository = new UserRepository(getConnection());
+            userRepository = new UserRepository();
         }
         return userRepository;
     }
@@ -48,25 +71,30 @@ public class AppContext {
         return authService;
     }
 
-    // Enrollment
     public static EnrollmentRepository getEnrollmentRepository() {
         if (enrollmentRepository == null) {
-            enrollmentRepository = new EnrollmentRepository(getConnection());
+            enrollmentRepository = new EnrollmentRepository();
         }
         return enrollmentRepository;
     }
 
     public static EnrollmentService getEnrollmentService() {
         if (enrollmentService == null) {
-            enrollmentService = new EnrollmentService(getEnrollmentRepository());
+            enrollmentService = new EnrollmentService(
+                    getEnrollmentRepository(),
+                    getStudentRepository(),
+                    getAcademicRepository(),
+                    getRequirementRepository(),
+                    getAuditRepository()
+            );
         }
         return enrollmentService;
     }
 
-    // Students
+
     public static StudentRepository getStudentRepository() {
         if (studentRepository == null) {
-            studentRepository = new StudentRepository(getConnection());
+            studentRepository = new StudentRepository();
         }
         return studentRepository;
     }
@@ -76,5 +104,75 @@ public class AppContext {
             studentService = new StudentService(getStudentRepository());
         }
         return studentService;
+    }
+
+
+    public static TrackRepository getTrackRepository() {
+        if (trackRepository == null) {
+            trackRepository = new TrackRepository();
+        }
+        return trackRepository;
+    }
+
+    public static TrackService getTrackService() {
+        if (trackService == null) {
+            trackService = new TrackService(getTrackRepository());
+        }
+        return trackService;
+    }
+
+
+    public static StrandRepository getStrandRepository() {
+        if (strandRepository == null) {
+            strandRepository = new StrandRepository();
+        }
+        return strandRepository;
+    }
+
+    public static StrandService getStrandService() {
+        if (strandService == null) {
+            strandService = new StrandService(getStrandRepository());
+        }
+        return strandService;
+    }
+
+
+    public static AuditRepository getAuditRepository() {
+        if (auditRepository == null) {
+            auditRepository = new AuditRepository();
+        }
+        return auditRepository;
+    }
+
+    public static AuditService getAuditService() {
+        if (auditService == null) {
+            auditService = new AuditService(getAuditRepository());
+        }
+        return auditService;
+    }
+
+
+    public static SectionRepository getSectionRepository() {
+        if (sectionRepository == null) {
+            sectionRepository = new SectionRepository();
+        }
+        return sectionRepository;
+    }
+
+    public static SectionService getSectionService() {
+        if (sectionService == null) {
+            sectionService = new SectionService(
+                    getSectionRepository(),
+                    getSchoolYearRepository()
+            );
+        }
+        return sectionService;
+    }
+
+    public static SchoolYearRepository getSchoolYearRepository() {
+        if (schoolYearRepository == null) {
+            schoolYearRepository = new SchoolYearRepository();
+        }
+        return schoolYearRepository;
     }
 }

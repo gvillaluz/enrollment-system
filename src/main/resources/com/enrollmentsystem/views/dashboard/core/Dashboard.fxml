@@ -13,9 +13,6 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="821.0" prefWidth="875.0" styleClass="main-container" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.core.DashboardController">
-   <padding>
-      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-   </padding>
    <children>
       <ScrollPane fx:id="scrollPane" fitToWidth="true" focusTraversable="false" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <content>
@@ -272,6 +269,9 @@
                </padding>
             </VBox>
          </content>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
       </ScrollPane>
    </children>
 </AnchorPane>

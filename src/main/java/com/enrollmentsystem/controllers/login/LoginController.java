@@ -76,7 +76,7 @@ public class LoginController {
 
             currentScene.getStylesheets().clear();
             currentScene.getStylesheets().add(
-                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/main.css")).toExternalForm()
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/core/main.css")).toExternalForm()
             );
 
             currentScene.setRoot(dashboardRoot);
