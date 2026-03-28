@@ -42,4 +42,10 @@ public abstract class BaseService {
             e.printStackTrace();
         }
     }
+
+    protected void validateSession() {
+        if (UserSession.getInstance() == null) {
+            throw new SecurityException("Unauthorized access. Please log in.");
+        }
+    }
 }

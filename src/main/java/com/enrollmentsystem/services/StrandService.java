@@ -1,51 +1,45 @@
 package com.enrollmentsystem.services;
 
 import com.enrollmentsystem.dtos.StrandDTO;
+import com.enrollmentsystem.enums.AuditAction;
+import com.enrollmentsystem.enums.AuditModule;
+import com.enrollmentsystem.mappers.StrandMapper;
 import com.enrollmentsystem.models.Strand;
 import com.enrollmentsystem.models.UserSession;
+import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.StrandRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class StrandService {
+public class StrandService extends BaseService {
     private final StrandRepository _repo;
 
-    public StrandService(StrandRepository repository) {
+    public StrandService(StrandRepository repository, AuditRepository auditRepo) {
+        super(auditRepo);
         this._repo = repository;
     }
 
     public CompletableFuture<List<StrandDTO>> loadStrands() {
-        if (UserSession.getInstance() == null)
-            return CompletableFuture.failedFuture(
-                    new SecurityException("Unauthorized access.")
-            );
+        validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            List<StrandDTO> strandDTOs = new ArrayList<>();
             var strands = _repo.getAllStrands();
 
             if (strands == null) {
                 throw new IllegalArgumentException("Failed to load strands.");
             }
 
-            for (Strand strand : strands) {
-                strandDTOs.add(new StrandDTO(
-                        strand.getStrandId(),
-                        strand.getStrandCode(),
-                        strand.getStrandDescription(),
-                        strand.getTrackId(),
-                        strand.getTrackCode(),
-                        strand.isArchived()
-                ));
-            }
-
-            return strandDTOs;
+            return strands.stream()
+                    .map(StrandMapper::toDTO)
+                    .toList();
         });
     }
 
     public CompletableFuture<Boolean> createStrand(StrandDTO strandDTO) {
+        validateSession();
+
         if (strandDTO.getStrandCode().trim().isEmpty() || strandDTO.getDescription().trim().isEmpty() || strandDTO.getTrackId() <= 0)
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException("All fields must not be empty.")
@@ -55,11 +49,7 @@ public class StrandService {
                 new SecurityException("Unauthorized access.")
         );
 
-        var strand = new Strand();
-        strand.setStrandCode(strandDTO.getStrandCode());
-        strand.setStrandDescription(strandDTO.getDescription());
-        strand.setTrackId(strandDTO.getTrackId());
-        strand.setArchived(false);
+        var strand = StrandMapper.toNewModel(strandDTO);
 
         return CompletableFuture.supplyAsync(() -> {
             Strand existingStrand = _repo.findStrandByCode(strand.getStrandCode());
@@ -76,11 +66,21 @@ public class StrandService {
                 throw new IllegalArgumentException("Strand description is already in use.");
             }
 
-            return _repo.addStrand(strand);
+            Integer newStrandId = _repo.addStrand(strand);
+
+            if (newStrandId == null) {
+                return false;
+            }
+
+            logActivity(newStrandId.toString(), AuditAction.ADD, AuditModule.STRAND_MANAGEMENT, "Added new strand: " + newStrandId);
+
+            return true;
         });
     }
 
     public CompletableFuture<Boolean> updateStrand(StrandDTO strandDTO) {
+        validateSession();
+
         if (strandDTO == null) return CompletableFuture.failedFuture(
                 new IllegalArgumentException("Invalid strand.")
         );
@@ -89,11 +89,7 @@ public class StrandService {
                 new SecurityException("Unauthorized access.")
         );
 
-        var strand = new Strand();
-        strand.setStrandId(strandDTO.getStrandId());
-        strand.setStrandCode(strandDTO.getStrandCode());
-        strand.setStrandDescription(strandDTO.getDescription());
-        strand.setTrackId(strandDTO.getTrackId());
+        var strand = StrandMapper.toModel(strandDTO);
 
         return CompletableFuture.supplyAsync(() -> {
             Strand existingStrand = _repo.findStrandByCode(strand.getStrandCode());
@@ -106,11 +102,18 @@ public class StrandService {
                 throw new IllegalArgumentException("Strand description is already in use.");
             }
 
-            return _repo.updateStrandById(strand);
+            if (_repo.updateStrandById(strand)) {
+                logActivity(String.valueOf(strand.getStrandId()), AuditAction.UPDATE, AuditModule.STRAND_MANAGEMENT, "Updated strand: " + strand.getStrandId());
+                return true;
+            }
+
+            return false;
         });
     }
 
     public CompletableFuture<Boolean> deleteStrand(int strandId) {
+        validateSession();
+
         if (strandId <= 0) return CompletableFuture.failedFuture(
                 new IllegalArgumentException("Invalid strand.")
         );

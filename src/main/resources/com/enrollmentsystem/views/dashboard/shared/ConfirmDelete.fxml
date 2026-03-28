@@ -6,14 +6,14 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="151.0" maxWidth="472.0" minHeight="151.0" minWidth="472.0" prefHeight="151.0" prefWidth="472.0" spacing="10.0" styleClass="delete-modal" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.shared.DeleteController">
+<VBox maxHeight="151.0" maxWidth="472.0" minHeight="151.0" minWidth="472.0" prefHeight="151.0" prefWidth="472.0" spacing="10.0" styleClass="delete-modal" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.shared.ConfirmationModalController">
    <children>
       <Label fx:id="titleLabel" prefHeight="100.0" styleClass="title" text="Delete" />
       <Label fx:id="messageLabel" alignment="TOP_LEFT" prefHeight="100.0" styleClass="message" text="Are you sure you want to delete this record?" />
       <HBox alignment="CENTER_RIGHT" prefHeight="74.0" prefWidth="432.0" spacing="10.0">
          <children>
             <Button maxHeight="29.0" maxWidth="95.0" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#onCancelClick" prefHeight="29.0" prefWidth="95.0" styleClass="cancel" text="Cancel" />
-            <Button maxHeight="29.0" maxWidth="95.0" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#onDeleteClick" prefHeight="29.0" prefWidth="95.0" styleClass="delete" text="Delete" />
+            <Button maxHeight="29.0" maxWidth="95.0" minHeight="29.0" minWidth="95.0" mnemonicParsing="false" onAction="#onConfirmAction" prefHeight="29.0" prefWidth="95.0" styleClass="delete" text="Delete" />
          </children>
       </HBox>
    </children>

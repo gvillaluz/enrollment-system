@@ -5,6 +5,7 @@ import com.enrollmentsystem.dtos.StrandDTO;
 import com.enrollmentsystem.models.Section;
 import com.enrollmentsystem.models.Strand;
 import com.enrollmentsystem.models.UserSession;
+import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.SchoolYearRepository;
 import com.enrollmentsystem.repositories.SectionRepository;
 
@@ -12,13 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class SectionService {
+public class SectionService extends BaseService {
     private final SectionRepository _sectionRepo;
     private final SchoolYearRepository _syRepo;
 
-    public SectionService(SectionRepository repo, SchoolYearRepository syRepo) {
+    public SectionService(SectionRepository repo, SchoolYearRepository syRepo, AuditRepository auditRepo) {
         _sectionRepo = repo;
         _syRepo = syRepo;
+        super(auditRepo);
     }
 
     public CompletableFuture<List<SectionDTO>> loadSections() {

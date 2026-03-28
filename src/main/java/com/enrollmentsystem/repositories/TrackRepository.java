@@ -3,10 +3,7 @@ package com.enrollmentsystem.repositories;
 import com.enrollmentsystem.models.Track;
 import com.enrollmentsystem.utils.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,20 +30,27 @@ public class TrackRepository {
         return tracks;
     }
 
-    public boolean addTrack(Track track) {
+    public Integer addTrack(Track track) {
         String query = "INSERT INTO shs_track (track_code, track_description, is_archived) VALUES (?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query)) {
+                PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, track.getTrackCode());
             statement.setString(2, track.getTrackDescription());
             statement.setBoolean(3, track.isArchived());
 
-            return statement.executeUpdate() > 0;
+            statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error in saving track: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 

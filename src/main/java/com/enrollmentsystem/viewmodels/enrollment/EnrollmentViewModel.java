@@ -78,4 +78,22 @@ public class EnrollmentViewModel {
     public CompletableFuture<EnrollmentFormDTO> getEditData(int enrollmentId) {
         return _service.loadEnrollmentData(enrollmentId);
     }
+
+    public CompletableFuture<Boolean> archiveEnrollment(EnrollmentSummaryViewModel enrollment, int pageIndex) {
+        int enrollmentId = enrollment.enrollmentIdProperty().get();
+        String lrn = enrollment.lrnProperty().get();
+
+        if (enrollmentId <= 0)
+            return CompletableFuture.failedFuture(
+                    new IllegalArgumentException("No enrollment record selected.")
+            );
+
+        return _service.archiveEnrollmentRecord(enrollmentId, lrn)
+                .thenApply(success -> {
+                    if (success) {
+                        Platform.runLater(() -> loadData(pageIndex));
+                    }
+                    return success;
+                });
+    }
 }

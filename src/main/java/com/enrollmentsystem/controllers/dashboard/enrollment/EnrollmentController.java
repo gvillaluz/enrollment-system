@@ -5,6 +5,7 @@
     import com.enrollmentsystem.dtos.EnrollmentFormDTO;
     import com.enrollmentsystem.enums.EnrollmentStatus;
     import com.enrollmentsystem.enums.Semester;
+    import com.enrollmentsystem.models.UserSession;
     import com.enrollmentsystem.utils.NotificationHelper;
     import com.enrollmentsystem.utils.ViewNavigator;
     import com.enrollmentsystem.viewmodels.enrollment.EnrollmentSummaryViewModel;
@@ -26,6 +27,7 @@
     import javafx.scene.layout.Region;
     import javafx.scene.layout.StackPane;
     import javafx.stage.Stage;
+    import javafx.stage.Window;
     import javafx.util.Callback;
     import javafx.util.Duration;
     import org.controlsfx.control.textfield.CustomTextField;
@@ -280,8 +282,42 @@
                     });
         }
 
-        private void handleArchive(EnrollmentSummaryViewModel student) {
-            System.out.println(student.lrnProperty().get());
+        private void handleArchive(EnrollmentSummaryViewModel enrollment) {
+            Window currentStage = enrollmentTable.getScene().getWindow();
+            Runnable onConfirmDelete = () -> {
+                viewModel.archiveEnrollment(enrollment, pagination.getCurrentPageIndex())
+                        .thenAccept(success -> {
+                            Platform.runLater(() -> {
+                                if (success) {
+                                    NotificationHelper.showToast(
+                                            currentStage,
+                                            "Enrollment record successfully archived",
+                                            "success"
+                                    );
+                                } else {
+                                    NotificationHelper.showToast(
+                                            currentStage,
+                                            "Failed to archive record.",
+                                            "error"
+                                    );
+                                }
+                            });
+                        })
+                        .exceptionally(ex -> {
+                            Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+                            Platform.runLater(() -> {
+                                NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                            });
+
+                            return null;
+                        });
+            };
+
+            ViewNavigator.showArchiveModal(
+                    (Stage) currentStage,
+                    onConfirmDelete
+            );
         }
 
         private Parent loadModal(EnrollmentFormDTO dto) {

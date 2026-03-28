@@ -32,3 +32,20 @@
     -fx-background-color: #C53434;
     -fx-text-fill: #FAFAFA;
 }
+
+.archive {
+    -fx-background-color: #6988AC;
+    -fx-text-fill: #FAFAFA;
+}
+
+.delete:hover {
+    -fx-background-color: #C75B5B;
+}
+
+.archive:hover {
+    -fx-background-color: #90ABCA;
+}
+
+.cancel:hover {
+    -fx-background-color: #DEDDDD;
+}

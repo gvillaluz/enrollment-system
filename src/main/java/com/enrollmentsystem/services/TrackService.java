@@ -1,45 +1,39 @@
 package com.enrollmentsystem.services;
 
 import com.enrollmentsystem.dtos.TrackDTO;
+import com.enrollmentsystem.enums.AuditAction;
+import com.enrollmentsystem.enums.AuditModule;
+import com.enrollmentsystem.mappers.TrackMapper;
 import com.enrollmentsystem.models.Track;
 import com.enrollmentsystem.models.UserSession;
+import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.TrackRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class TrackService {
+public class TrackService extends BaseService {
     private final TrackRepository _repo;
 
-    public TrackService(TrackRepository repo) {
+    public TrackService(TrackRepository repo, AuditRepository auditRepo) {
+        super(auditRepo);
         _repo = repo;
     }
 
     public CompletableFuture<List<TrackDTO>> loadTracks() {
-        if (UserSession.getInstance() == null)
-            return CompletableFuture.failedFuture(
-                    new SecurityException("Unauthorized access.")
-            );
+        validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            List<TrackDTO> trackDTOs = new ArrayList<>();
             var tracks = _repo.getAllTracks();
 
             if (tracks == null) {
                 throw new IllegalArgumentException("Failed to load tracks.");
             }
 
-            for (Track track : tracks) {
-                trackDTOs.add(new TrackDTO(
-                        track.getTrackId(),
-                        track.getTrackCode(),
-                        track.getTrackDescription(),
-                        track.isArchived()
-                ));
-            }
-
-            return trackDTOs;
+            return tracks.stream()
+                    .map(TrackMapper::toDTO)
+                    .toList();
         });
     }
 
@@ -49,15 +43,13 @@ public class TrackService {
                     new IllegalArgumentException("Track Code and Description must not be empty.")
             );
 
+        validateSession();
+
         if (!UserSession.getInstance().isAdmin()) return CompletableFuture.failedFuture(
                 new SecurityException("Unauthorized access.")
         );
 
-        var track = new Track();
-        track.setTrackId(trackDTO.getTrackId());
-        track.setTrackCode(trackDTO.getTrackCode());
-        track.setTrackDescription(trackDTO.getDescription());
-        track.setArchived(false);
+        var track = TrackMapper.toNewModel(trackDTO);
 
         return CompletableFuture.supplyAsync(() -> {
             Track existingTrack = _repo.findTrackByCode(track.getTrackCode());
@@ -73,7 +65,15 @@ public class TrackService {
             if (_repo.existsByDescription(track.getTrackDescription(), -1))
                 throw new IllegalArgumentException("Track description is already in use.");
 
-            return _repo.addTrack(track);
+            Integer newTrackId = _repo.addTrack(track);
+
+            if (newTrackId == null) {
+                return false;
+            }
+
+            logActivity(newTrackId.toString(), AuditAction.ADD, AuditModule.TRACK_MANAGEMENT, "Added new track: " + newTrackId);
+
+            return true;
         });
     }
 
@@ -86,10 +86,7 @@ public class TrackService {
                 new SecurityException("Unauthorized access.")
         );
 
-        var track = new Track();
-        track.setTrackId(trackDTO.getTrackId());
-        track.setTrackCode(trackDTO.getTrackCode());
-        track.setTrackDescription(trackDTO.getDescription());
+        var track = TrackMapper.toModel(trackDTO);
 
         return CompletableFuture.supplyAsync(() -> {
             Track existingTrack = _repo.findTrackByCode(track.getTrackCode());
@@ -102,7 +99,12 @@ public class TrackService {
                 throw new IllegalArgumentException("Track description is already in use.");
             }
 
-            return _repo.updateTrackById(track);
+            if (_repo.updateTrackById(track)) {
+                logActivity(String.valueOf(track.getTrackId()), AuditAction.UPDATE, AuditModule.TRACK_MANAGEMENT, "Updated track: " + track.getTrackId());
+                return true;
+            }
+
+            return false;
         });
     }
 

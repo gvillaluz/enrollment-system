@@ -3,10 +3,7 @@ package com.enrollmentsystem.repositories;
 import com.enrollmentsystem.models.Strand;
 import com.enrollmentsystem.utils.DatabaseConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class StrandRepository {
                         "t.track_code " +
                         "FROM shs_strand s " +
                         "LEFT JOIN shs_track t ON s.shs_track_id = t.shs_track_id " +
-                        "WHERE s.is_archived = 0";
+                        "WHERE s.is_archived = 0 AND t.is_archived = 0";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement statement = conn.prepareStatement(query);
@@ -43,21 +40,28 @@ public class StrandRepository {
         }
     }
 
-    public boolean addStrand(Strand strand) {
+    public Integer addStrand(Strand strand) {
         String query = "INSERT INTO shs_strand (strand_code, strand_description, shs_track_id, is_archived) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+            PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, strand.getStrandCode());
             statement.setString(2, strand.getStrandDescription());
             statement.setInt(3, strand.getTrackId());
             statement.setBoolean(4, strand.isArchived());
 
-            return statement.executeUpdate() > 0;
+            statement.executeUpdate();
+
+            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
+            return null;
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Failed to add strand: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 

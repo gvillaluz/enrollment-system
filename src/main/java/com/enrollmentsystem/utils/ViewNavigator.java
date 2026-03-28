@@ -1,7 +1,7 @@
 package com.enrollmentsystem.utils;
 
 import com.enrollmentsystem.App;
-import com.enrollmentsystem.controllers.shared.DeleteController;
+import com.enrollmentsystem.controllers.shared.ConfirmationModalController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -55,34 +55,6 @@ public class ViewNavigator {
         }
     }
 
-//    public static void createAddStudentDialog(Stage ownerStage) {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/enrollment/EnrollmentForm.fxml"));
-//            Parent dialogLoader = loader.load();
-//
-//            Stage dialog = new Stage();
-//            dialog.initModality(Modality.APPLICATION_MODAL);
-//            dialog.setResizable(false);
-//            dialog.setMaximized(true);
-//            dialog.initStyle(StageStyle.TRANSPARENT);
-//            dialog.initOwner(ownerStage);
-//
-//            Scene dialogScene = new Scene(dialogLoader);
-//            dialogScene.setFill(Color.TRANSPARENT);
-//            dialogScene.getStylesheets().add(
-//                    Objects.requireNonNull(App.class.getResource(
-//                            "/com/enrollmentsystem/styles/enrollment/enrollmentform.css"
-//                    )).toExternalForm()
-//            );
-//
-//            dialog.setScene(dialogScene);
-//            dialog.showAndWait();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
     public static void exitAddPopup(Button exitBtn) {
         Stage popupStage = (Stage) exitBtn.getScene().getWindow();
         popupStage.close();
@@ -115,34 +87,57 @@ public class ViewNavigator {
             FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/shared/ConfirmDelete.fxml"));
             Parent content = loader.load();
             content.getStylesheets().add(
-                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/delete-modal.css")).toExternalForm()
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/confirm-modal.css")).toExternalForm()
             );
 
-            DeleteController controller = loader.getController();
+            ConfirmationModalController controller = loader.getController();
             controller.setup(onConfirmDelete);
 
-            StackPane overlay = new StackPane();
-            overlay.getStyleClass().add("stack-pane");
-            overlay.getChildren().add(content);
+            showConfirmationModal(content, owner);
 
-            Stage modal = new Stage();
-            modal.initModality(Modality.APPLICATION_MODAL);
-            modal.setResizable(false);
-            modal.setMaximized(true);
-            modal.initStyle(StageStyle.TRANSPARENT);
-            modal.initOwner(owner);
-
-            Scene modalContent = new Scene(overlay);
-            modalContent.setFill(Color.TRANSPARENT);
-            modalContent.getStylesheets().add(
-                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/modal.css")).toExternalForm()
-            );
-
-            modal.setScene(modalContent);
-            modal.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to load delete modal: " + e.getMessage());
         }
+    }
+
+    public static void showArchiveModal(Stage owner, Runnable onConfirmArchive) {
+        try {
+            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/shared/ConfirmArchive.fxml"));
+            Parent content = loader.load();
+            content.getStylesheets().add(
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/confirm-modal.css")).toExternalForm()
+            );
+
+            ConfirmationModalController controller = loader.getController();
+            controller.setup(onConfirmArchive);
+
+            showConfirmationModal(content, owner);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Failed to load archive modal: " + e.getMessage());
+        }
+    }
+
+    private static void showConfirmationModal(Parent content, Stage owner) {
+        StackPane overlay = new StackPane();
+        overlay.getStyleClass().add("stack-pane");
+        overlay.getChildren().add(content);
+
+        Stage modal = new Stage();
+        modal.initModality(Modality.APPLICATION_MODAL);
+        modal.setResizable(false);
+        modal.setMaximized(true);
+        modal.initStyle(StageStyle.TRANSPARENT);
+        modal.initOwner(owner);
+
+        Scene modalContent = new Scene(overlay);
+        modalContent.setFill(Color.TRANSPARENT);
+        modalContent.getStylesheets().add(
+                Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/modal.css")).toExternalForm()
+        );
+
+        modal.setScene(modalContent);
+        modal.showAndWait();
     }
 }

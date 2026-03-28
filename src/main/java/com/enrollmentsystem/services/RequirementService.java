@@ -4,6 +4,7 @@ import com.enrollmentsystem.dtos.RequirementSummaryDTO;
 import com.enrollmentsystem.enums.AuditAction;
 import com.enrollmentsystem.enums.AuditModule;
 import com.enrollmentsystem.models.StudentRequirement;
+import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.RequirementRepository;
 import com.enrollmentsystem.repositories.SchoolYearRepository;
@@ -24,6 +25,8 @@ public class RequirementService extends BaseService {
     }
 
     public CompletableFuture<Integer> getRowCount(String searchValue) {
+        validateSession();
+
         return CompletableFuture.supplyAsync(() -> {
             int schoolYearId = _syRepo.getActiveSchoolYearId();
 
@@ -37,6 +40,8 @@ public class RequirementService extends BaseService {
     }
 
     public CompletableFuture<List<RequirementSummaryDTO>> getRequirementsChecklist(String searchValue, int offset) {
+        validateSession();
+
         return CompletableFuture.supplyAsync(() -> {
             int schoolYearId = _syRepo.getActiveSchoolYearId();
 
@@ -50,6 +55,8 @@ public class RequirementService extends BaseService {
     }
 
     public CompletableFuture<Void> updateStudentRequirement(String lrn, int refId, boolean isSubmitted) {
+        validateSession();
+
         if (ValidationHelper.isNullOrEmpty(lrn) || refId == 0)
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException("Invalid requirement.")
@@ -61,24 +68,6 @@ public class RequirementService extends BaseService {
                 logActivity(lrn, AuditAction.UPDATE, AuditModule.REQUIREMENTS, "Updated student requirement: " + lrn);
             }
             return null;
-        });
-    }
-
-    public CompletableFuture<List<RequirementSummaryDTO>> searchByName(String name) {
-        if (ValidationHelper.isNullOrEmpty(name))
-            return CompletableFuture.failedFuture(
-                    new IllegalArgumentException("Invalid name.")
-            );
-
-        return CompletableFuture.supplyAsync(() -> {
-            int schoolYearId = _syRepo.getActiveSchoolYearId();
-
-            if (schoolYearId <= 0) {
-                System.out.println("No active school year id");
-                throw new IllegalArgumentException("Failed to search checklist");
-            }
-
-            return _requirementRepo.searchRequirementsByStudentName(name, schoolYearId);
         });
     }
 }

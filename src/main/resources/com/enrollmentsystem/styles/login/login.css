@@ -45,3 +45,7 @@
 .eye-btn {
     -fx-background-color: transparent;
 }
+
+.password-eye-icon {
+    -fx-icon-color: #333333;
+}

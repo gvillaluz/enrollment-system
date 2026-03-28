@@ -30,6 +30,8 @@ public class EnrollmentService extends BaseService {
     }
 
     public CompletableFuture<Integer> countRows(int gradeLevel, String searchValue) {
+        validateSession();
+
         return CompletableFuture.supplyAsync(() -> {
             Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId();
 
@@ -43,6 +45,8 @@ public class EnrollmentService extends BaseService {
     }
 
     public CompletableFuture<List<EnrollmentDTO>> loadLatest20Enrollments(int gradeLevel, String searchValue, int offset) {
+        validateSession();
+
         return CompletableFuture.supplyAsync(() -> {
             Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId();
 
@@ -51,21 +55,12 @@ public class EnrollmentService extends BaseService {
                 throw new IllegalArgumentException("Failed to get enrollment list.");
             }
 
-            var enrollmentList = _enrollmentRepo.getLatest20(gradeLevel, schoolYearId, searchValue, offset);
-
-            if (enrollmentList == null || enrollmentList.isEmpty()) {
-                throw new IllegalArgumentException("Failed to load enrollments");
-            }
-
-            return enrollmentList;
+            return _enrollmentRepo.getLatest20(gradeLevel, schoolYearId, searchValue, offset);
         });
     }
 
     public CompletableFuture<EnrollmentFormDTO> loadEnrollmentDataByLRN(String lrn) {
-        if (ValidationHelper.isNullOrEmpty(lrn))
-            return CompletableFuture.failedFuture(
-                    new IllegalArgumentException("Invalid student lrn.")
-            );
+        validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
             var student = _studentRepo.findStudentByLRN(lrn);
@@ -85,6 +80,8 @@ public class EnrollmentService extends BaseService {
     }
 
     public CompletableFuture<EnrollmentFormDTO> loadEnrollmentData(int enrollmentId) {
+        validateSession();
+
         if (enrollmentId <= 0)
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException("Invalid enrollment.")
@@ -107,6 +104,7 @@ public class EnrollmentService extends BaseService {
     public CompletableFuture<Boolean> processEnrollment(EnrollmentFormDTO dto) {
         try {
             validateEnrollmentFields(dto);
+            validateSession();
         } catch (IllegalArgumentException e) {
             return CompletableFuture.failedFuture(e);
         }
@@ -166,7 +164,7 @@ public class EnrollmentService extends BaseService {
                             student.getLrn(),
                             AuditAction.ADD,
                             AuditModule.ENROLLMENT,
-                            "Added enrollment: " + student.getLrn()
+                            "Added enrollment record: " + student.getLrn()
                     );
 
                     conn.commit();
@@ -184,6 +182,8 @@ public class EnrollmentService extends BaseService {
     }
 
     public CompletableFuture<Boolean> editEnrollment(EnrollmentFormDTO dto) {
+        validateSession();
+
         try {
             validateEnrollmentFields(dto);
         } catch (IllegalArgumentException e) {
@@ -228,27 +228,20 @@ public class EnrollmentService extends BaseService {
         });
     }
 
-    public CompletableFuture<List<EnrollmentDTO>> searchEnrollment(String searchValue, int gradeLevel) {
-        if (ValidationHelper.isNullOrEmpty(searchValue))
+    public CompletableFuture<Boolean> archiveEnrollmentRecord(int enrollmentId, String lrn) {
+        validateSession();
+
+        if (enrollmentId <= 0)
             return CompletableFuture.failedFuture(
-                    new IllegalArgumentException("Invalid name.")
+                    new IllegalArgumentException("Invalid Student LRN")
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId();
-
-            if (schoolYearId == null) {
-                System.out.println("Failed to get active school year: ");
-                throw new IllegalArgumentException("Failed to get enrollment list.");
+            if (_enrollmentRepo.archiveEnrollmentByLRN(enrollmentId)) {
+                logActivity(lrn, AuditAction.ARCHIVE, AuditModule.ENROLLMENT, "Archive enrollment record: " + lrn);
+                return true;
             }
-
-            var enrollmentList = _enrollmentRepo.searchEnrollmentByNameOrLRN(gradeLevel, schoolYearId, searchValue);
-
-            if (enrollmentList == null || enrollmentList.isEmpty()) {
-                throw new IllegalArgumentException("Failed to load enrollments");
-            }
-
-            return enrollmentList;
+            return false;
         });
     }
 

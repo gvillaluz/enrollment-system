@@ -5,7 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.stage.Stage;
 
-public class DeleteController {
+public class ConfirmationModalController {
 
     private Runnable onConfirmAction;
 
@@ -13,9 +13,8 @@ public class DeleteController {
     public void initialize() {}
 
     @FXML
-    public void onDeleteClick(ActionEvent event) {
+    public void onConfirmAction(ActionEvent event) {
         if (onConfirmAction != null) onConfirmAction.run();
-
         close(event);
     }
 

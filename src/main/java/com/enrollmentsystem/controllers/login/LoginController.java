@@ -111,23 +111,22 @@ public class LoginController {
         boolean wasMasked = passwordField.isVisible();
 
         if (wasMasked) {
-            // UNMASK Logic
             passwordField.setVisible(false);
             passwordField.setManaged(false);
             passwordTextField.setVisible(true);
             passwordTextField.setManaged(true);
 
-            eyeIcon.setIconLiteral("fas-eye-slash"); // Reverts icon state
+            eyeIcon.setIconLiteral("fas-eye-slash");
             passwordTextField.requestFocus();
             passwordTextField.selectEnd();
         } else {
-            // MASK Logic
+
             passwordTextField.setVisible(false);
             passwordTextField.setManaged(false);
             passwordField.setVisible(true);
             passwordField.setManaged(true);
 
-            eyeIcon.setIconLiteral("fas-eye"); // Reverts icon state
+            eyeIcon.setIconLiteral("fas-eye");
             passwordField.requestFocus();
             passwordField.selectEnd();
         }

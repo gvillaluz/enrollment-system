@@ -116,7 +116,10 @@ public class AppContext {
 
     public static TrackService getTrackService() {
         if (trackService == null) {
-            trackService = new TrackService(getTrackRepository());
+            trackService = new TrackService(
+                    getTrackRepository(),
+                    getAuditRepository()
+            );
         }
         return trackService;
     }
@@ -131,7 +134,10 @@ public class AppContext {
 
     public static StrandService getStrandService() {
         if (strandService == null) {
-            strandService = new StrandService(getStrandRepository());
+            strandService = new StrandService(
+                    getStrandRepository(),
+                    getAuditRepository()
+            );
         }
         return strandService;
     }
@@ -163,7 +169,8 @@ public class AppContext {
         if (sectionService == null) {
             sectionService = new SectionService(
                     getSectionRepository(),
-                    getSchoolYearRepository()
+                    getSchoolYearRepository(),
+                    getAuditRepository()
             );
         }
         return sectionService;

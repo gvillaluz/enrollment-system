@@ -78,10 +78,6 @@
     -fx-icon-color: #333333;
 }
 
-.archive-icon:hover {
-    -fx-icon-color: #254d32;
-}
-
 .pagination .number-button {
     -fx-border-radius: 2;
     -fx-background-radius: 2;

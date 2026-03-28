@@ -369,4 +369,21 @@ public class EnrollmentRepository {
             return null;
         }
     }
+
+    public boolean archiveEnrollmentByLRN(int enrollmentId) {
+        String query = "UPDATE enrollments " +
+                        "SET enrollment_status = 'Archived' " +
+                        "WHERE enrollment_id = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, enrollmentId);
+
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.out.println("Failed to archive enrollment record: " + e.getMessage());
+            return false;
+        }
+    }
 }
