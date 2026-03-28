@@ -53,21 +53,38 @@
                   <Font size="14.0" />
                </font>
             </TextField>
-            <PasswordField fx:id="passwordField" maxHeight="61.0" promptText="Your Password" styleClass="password-input">
-               <font>
-                  <Font size="14.0" />
-               </font>
+            <StackPane fx:id="passwordContainer">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-               <styleClass>
-                  <String fx:value="password-input" />
-                  <String fx:value="inputs" />
-               </styleClass>
-            </PasswordField>
+               <children>
+                  <PasswordField fx:id="passwordField" maxHeight="61.0" promptText="Your Password" styleClass="password-input">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <styleClass>
+                        <String fx:value="password-input" />
+                        <String fx:value="inputs" />
+                     </styleClass>
+                  </PasswordField>
+                  <TextField fx:id="passwordTextField" maxHeight="61.0" promptText="Your Password" styleClass="inputs">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="eyeBtn" mnemonicParsing="false" styleClass="eye-btn">
+                     <StackPane.margin>
+                        <Insets />
+                     </StackPane.margin>
+                  </Button>
+               </children>
+            </StackPane>
             <Button fx:id="loginBtn" alignment="CENTER" contentDisplay="GRAPHIC_ONLY" maxHeight="51.0" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleLogin" styleClass="login-btn" text="Login" textAlignment="CENTER">
                <font>
                   <Font size="14.0" />

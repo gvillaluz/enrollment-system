@@ -39,5 +39,9 @@
 
 .spinner,
 .spinner .box {
-    -fx-background-color: tranparent;
+    -fx-background-color: transparent;
+}
+
+.eye-btn {
+    -fx-background-color: transparent;
 }

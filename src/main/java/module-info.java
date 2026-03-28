@@ -10,6 +10,7 @@ module com.enrollmentsystem {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.fontawesome5;
     requires mysql.connector.j;
+    requires java.compiler;
 
     opens com.enrollmentsystem to javafx.fxml;
     exports com.enrollmentsystem;

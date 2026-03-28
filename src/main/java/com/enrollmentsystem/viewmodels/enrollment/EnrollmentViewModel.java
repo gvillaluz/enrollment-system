@@ -10,10 +10,7 @@ import com.enrollmentsystem.services.StudentService;
 import com.enrollmentsystem.services.TrackService;
 import com.enrollmentsystem.utils.ValidationHelper;
 import javafx.application.Platform;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -29,6 +26,7 @@ import java.util.logging.Filter;
 public class EnrollmentViewModel {
     private final IntegerProperty totalPages = new SimpleIntegerProperty(1);
     private final StringProperty searchValue = new SimpleStringProperty("");
+    private final BooleanProperty isLoading = new SimpleBooleanProperty(true);
 
     private int gradeLevel;
     private final int PAGE_LIMIT = 15;
@@ -40,6 +38,7 @@ public class EnrollmentViewModel {
 
     public IntegerProperty totalPagesProperty() { return totalPages; }
     public StringProperty searchValueProperty() { return searchValue; }
+    public BooleanProperty loadingProperty() { return isLoading; }
 
     public ObservableList<EnrollmentSummaryViewModel> getEnrollmentList() {
         return enrollmentList;
@@ -47,6 +46,7 @@ public class EnrollmentViewModel {
 
     public void loadData(int pageIndex) {
         enrollmentList.clear();
+        isLoading.set(true);
 
         int offset = pageIndex * PAGE_LIMIT;
 
@@ -66,7 +66,12 @@ public class EnrollmentViewModel {
                         .toList();
 
                 enrollmentList.setAll(newItems);
+                isLoading.set(false);
             });
+        })
+        .exceptionally(ex -> {
+            Platform.runLater(() -> isLoading.set(false));
+            return null;
         });
     }
 

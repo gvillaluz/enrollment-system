@@ -22,13 +22,9 @@
 }
 
 .dialog-title-bar .title-bar-exit {
-    -fx-background-color: #FFFFFF;
+    -fx-background-color: #7D2A1F;
     -fx-border-color: transparent;
     -fx-border-width: 0;
-}
-
-.dialog-title-bar .title-bar-exit:hover .icon-close {
-    -fx-fill: #502215;
 }
 
 .dialog .main-content {

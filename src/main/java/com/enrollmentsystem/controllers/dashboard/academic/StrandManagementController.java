@@ -16,6 +16,7 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 import org.kordamp.ikonli.javafx.FontIcon;
 
+import javax.tools.Tool;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -67,6 +68,9 @@ public class StrandManagementController {
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
                             private final HBox pane = new HBox(editBox, separator, archiveBox);
 
+                            private final Tooltip editTooltip = new Tooltip("Edit");
+                            private final Tooltip deleteTooltip = new Tooltip("Delete");
+
                             {
                                 editBox.setAlignment(javafx.geometry.Pos.CENTER);
                                 archiveBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -80,6 +84,9 @@ public class StrandManagementController {
 
                                 editIcon.getStyleClass().add("btn-action");
                                 deleteIcon.getStyleClass().add("btn-action");
+
+                                Tooltip.install(editBox, editTooltip);
+                                Tooltip.install(archiveBox, deleteTooltip);
 
                                 pane.setSpacing(0);
 

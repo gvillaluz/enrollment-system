@@ -19,7 +19,7 @@
                   <HBox fx:id="searchContainer" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="949.0" styleClass="search-container" />
                   <TableView fx:id="requirementsTable" editable="true" prefHeight="431.0" prefWidth="1123.0" VBox.vgrow="ALWAYS">
                      <columns>
-                        <TableColumn fx:id="lrnCol" editable="false" maxWidth="149.0" minWidth="100.0" prefWidth="120.0" sortable="false" text="LRN" />
+                        <TableColumn fx:id="lrnCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="120.0" sortable="false" text="LRN" />
                         <TableColumn fx:id="lastnameCol" editable="false" maxWidth="149.0" minWidth="100.0" prefWidth="120.0" sortable="false" text="LAST NAME" />
                         <TableColumn fx:id="firstnameCol" editable="false" maxWidth="149.0" minWidth="100.0" prefWidth="120.0" sortable="false" text="FIRST NAME" />
                         <TableColumn fx:id="middlenameCol" editable="false" maxWidth="149.0" minWidth="100.0" prefWidth="120.0" sortable="false" text="MIDDLE NAME" />

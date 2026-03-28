@@ -11,10 +11,14 @@
     import com.enrollmentsystem.viewmodels.enrollment.EnrollmentViewModel;
     import javafx.animation.PauseTransition;
     import javafx.application.Platform;
+    import javafx.beans.binding.Bindings;
     import javafx.event.ActionEvent;
     import javafx.fxml.FXML;
     import javafx.fxml.FXMLLoader;
+    import javafx.scene.Cursor;
+    import javafx.scene.Node;
     import javafx.scene.Parent;
+    import javafx.scene.Scene;
     import javafx.scene.control.*;
     import javafx.scene.image.Image;
     import javafx.scene.image.ImageView;
@@ -25,6 +29,7 @@
     import javafx.util.Callback;
     import javafx.util.Duration;
     import org.controlsfx.control.textfield.CustomTextField;
+    import org.kordamp.ikonli.javafx.FontIcon;
 
     import java.io.IOException;
     import java.util.Objects;
@@ -56,6 +61,7 @@
             setTableColumns();
             setupActionColumn();
             setupPagination();
+            setupLoadingState();
 
             viewModel.setGradeLevel(gradeLevel);
             enrollmentTable.setItems(viewModel.getEnrollmentList());
@@ -184,17 +190,16 @@
                         @Override
                         public TableCell<EnrollmentSummaryViewModel, Void> call(final TableColumn<EnrollmentSummaryViewModel, Void> param) {
                             return new TableCell<>() {
+                                private final FontIcon editIcon = new FontIcon("fas-edit");
+                                private final FontIcon archiveIcon = new FontIcon("fas-inbox");
 
-                                // 1. Create Labels
-                                private final Label editLbl = new Label("EDIT");
-                                private final Label archiveLbl = new Label("ARCHIVE");
-
-                                // 2. Create Containers (HBoxes) for the labels
-                                //    This allows the whole "box" to be clickable, not just the text.
-                                private final HBox editBox = new HBox(editLbl);
-                                private final HBox archiveBox = new HBox(archiveLbl);
+                                private final HBox editBox = new HBox(editIcon);
+                                private final HBox archiveBox = new HBox(archiveIcon);
                                 private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
                                 private final HBox pane = new HBox(editBox, separator, archiveBox);
+
+                                private final Tooltip editTooltip = new Tooltip("Edit");
+                                private final Tooltip archiveTooltip = new Tooltip("Archive");
 
                                 {
                                     editBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -207,8 +212,11 @@
                                     editBox.setMaxWidth(Double.MAX_VALUE);
                                     archiveBox.setMaxWidth(Double.MAX_VALUE);
 
-                                    editLbl.getStyleClass().add("btn-action");
-                                    archiveLbl.getStyleClass().add("btn-action");
+                                    editIcon.getStyleClass().add("edit-icon");
+                                    archiveIcon.getStyleClass().add("archive-icon");
+
+                                    Tooltip.install(editBox, editTooltip);
+                                    Tooltip.install(archiveBox, archiveTooltip);
 
                                     pane.setSpacing(0);
 
@@ -250,15 +258,20 @@
         private void handleEdit(EnrollmentSummaryViewModel student) {
             System.out.println(student.lrnProperty().get());
             Stage rootWindow = (Stage) enrollmentTable.getScene().getWindow();
+            Scene rootScene = (Scene) enrollmentTable.getScene();
+
+            rootScene.setCursor(Cursor.WAIT);
 
             viewModel.getEditData(student.enrollmentIdProperty().get())
                     .thenAccept(dto ->  {
                         Platform.runLater(() -> {
+                            rootScene.setCursor(Cursor.DEFAULT);
                             ViewNavigator.showModal(loadModal(dto), rootWindow);
                         });
                     })
                     .exceptionally(ex -> {
                         Platform.runLater(() -> {
+                            rootScene.setCursor(Cursor.DEFAULT);
                             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                             NotificationHelper.showToast(rootWindow, cause.getMessage(), "error");
                             ex.printStackTrace();
@@ -305,5 +318,22 @@
                 viewModel.loadData(pageIndex);
                 return enrollmentTable;
             });
+        }
+
+        private void setupLoadingState() {
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            progressIndicator.setMaxSize(50, 50);
+            progressIndicator.getStyleClass().add("progress-indicator");
+
+            Label emptyLabel = new Label("No students found.");
+
+            enrollmentTable.placeholderProperty().bind(
+                    Bindings.when(viewModel.loadingProperty())
+                            .then((Node) progressIndicator)
+                            .otherwise((Node) emptyLabel)
+            );
+
+            searchbarContainer.disableProperty().bind(viewModel.loadingProperty());
+            pagination.disableProperty().bind(viewModel.loadingProperty());
         }
     }

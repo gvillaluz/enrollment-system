@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
@@ -77,6 +78,9 @@ public class TrackManagementController {
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
                             private final HBox pane = new HBox(editBox, separator, archiveBox);
 
+                            private final Tooltip deleteTooltip = new Tooltip("Delete");
+                            private final Tooltip editTooltip = new Tooltip("Edit");
+
                             {
                                 editBox.setAlignment(javafx.geometry.Pos.CENTER);
                                 archiveBox.setAlignment(javafx.geometry.Pos.CENTER);
@@ -90,6 +94,9 @@ public class TrackManagementController {
 
                                 editIcon.getStyleClass().add("edit-icon");
                                 deleteIcon.getStyleClass().add("delete-icon");
+
+                                Tooltip.install(editBox, editTooltip);
+                                Tooltip.install(archiveBox, deleteTooltip);
 
                                 pane.setSpacing(0);
 

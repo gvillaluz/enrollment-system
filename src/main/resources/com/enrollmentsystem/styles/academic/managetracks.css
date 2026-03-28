@@ -47,15 +47,6 @@
 .edit-icon,
 .delete-icon {
     -fx-icon-color: #333333;
-    -fx-cursor: hand;
-}
-
-.edit-icon:hover {
-    -fx-icon-color: #6988AC;
-}
-
-.delete-icon:hover {
-    -fx-icon-color: #C53434;
 }
 
 .table-view {
@@ -65,7 +56,7 @@
 }
 
 .table-view .table-row-cell:hover {
-    -fx-background-color: lightgray;
+    -fx-background-color: #E5E5E5;
 }
 
 .table-row-cell:hover .table-cell {

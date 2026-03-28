@@ -1,3 +1,8 @@
+.table-vbox {
+    -fx-background-color: #FAFAFA;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.25), 5, 0, 0, 2);
+}
+
 .addStudentBtn {
     -fx-min-width: 0;
     -fx-min-height: 0;
@@ -34,7 +39,7 @@
 }
 
 .table-view .table-row-cell:hover {
-    -fx-background-color: lightgray;
+    -fx-background-color: #E5E5E5;
 }
 
 .table-row-cell:hover .table-cell {
@@ -45,11 +50,36 @@
     -fx-border-color: transparent; /* Match your orange theme on hover */
 }
 
+.table-view .placeholder {
+    -fx-opacity: 1.0;
+}
+
+/* 2. Ensure the ProgressIndicator inside uses your theme color */
+.table-view .placeholder .progress-indicator {
+    -fx-progress-color: #EF7707;
+    -fx-opacity: 1.0;
+}
+
+/* 3. Make sure the 'No records' label is also solid */
+.table-view .placeholder .label {
+    -fx-text-fill: #333333;
+    -fx-opacity: 1.0;
+}
+
 .btn-action {
     -fx-underline: true;
     -fx-font-weight: bold;
     -fx-font-size: 0.875em;
     -fx-cursor: hand;
+}
+
+.edit-icon,
+.archive-icon {
+    -fx-icon-color: #333333;
+}
+
+.archive-icon:hover {
+    -fx-icon-color: #254d32;
 }
 
 .pagination .number-button {
@@ -62,4 +92,12 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 2;
+}
+
+.tooltip {
+    -fx-background-color: #333333;
+    -fx-text-fill: white;
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 4px;
+    -fx-font-size: 12px;
 }
