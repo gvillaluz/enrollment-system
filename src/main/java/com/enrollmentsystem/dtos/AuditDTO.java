@@ -11,15 +11,19 @@ public class AuditDTO {
     private String username;
     private AuditAction action;
     private AuditModule module;
+    private String targetKey;
     private String description;
     private LocalDateTime timestamp;
 
-    public AuditDTO(int logId, int userId, String username, AuditAction action, AuditModule module, String description, LocalDateTime timestamp) {
+    public AuditDTO() {}
+
+    public AuditDTO(int logId, int userId, String username, AuditAction action, AuditModule module, String targetKey, String description, LocalDateTime timestamp) {
         this.logId = logId;
         this.userId = userId;
         this.username = username;
         this.action = action;
         this.module = module;
+        this.targetKey = targetKey;
         this.description = description;
         this.timestamp = timestamp;
     }
@@ -38,6 +42,9 @@ public class AuditDTO {
 
     public AuditModule getModule() { return module; }
     public void setModule(AuditModule module) { this.module = module; }
+
+    public String getTargetKey() { return targetKey; }
+    public void setTargetKey(String targetKey) { this.targetKey = targetKey; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }

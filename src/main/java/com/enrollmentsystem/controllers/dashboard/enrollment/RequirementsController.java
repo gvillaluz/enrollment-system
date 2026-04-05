@@ -68,6 +68,8 @@ public class RequirementsController {
             } else {
                 pagination.setCurrentPageIndex(0);
             }
+
+            Platform.runLater(searchField::requestFocus);
         });
 
         viewModel.searchValueProperty().addListener((obs, oldVal, newVal) -> {

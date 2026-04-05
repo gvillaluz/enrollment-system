@@ -4,11 +4,14 @@ import com.enrollmentsystem.App;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.viewmodels.login.LoginViewModel;
 import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -25,6 +28,7 @@ public class LoginController {
 
     private final LoginViewModel viewModel = new LoginViewModel();
     private final FontIcon eyeIcon = new FontIcon("fas-eye");
+    private final ProgressIndicator indicator = new ProgressIndicator();
 
     @FXML
     public void initialize() {
@@ -37,6 +41,8 @@ public class LoginController {
         loginBtn.setContentDisplay(ContentDisplay.TEXT_ONLY);
         loginBtn.setDefaultButton(true);
         eyeBtn.setOnAction(event -> toggleMasking());
+        indicator.getStyleClass().add("spinner");
+        loginBtn.setGraphic(indicator);
 
         setupBindings();
 
@@ -44,15 +50,20 @@ public class LoginController {
 
     @FXML
     public void handleLogin() {
-        var user = viewModel.login();
+        viewModel.login()
+            .thenAccept(userDTO -> {
+                Platform.runLater(() -> {
+                    if (userDTO != null) {
+                        UserSession.login(userDTO);
 
-        if (user != null) {
-            System.out.println("Success Login Attempt!");
-            UserSession.login(user);
-            goToDashboard();
-        } else {
-            System.out.println("Failed Login Attempt!");
-        }
+                        if (viewModel.isDefaultPassword()) {
+                            goToChangePassword();
+                        } else {
+                            goToDashboard();
+                        }
+                    }
+                });
+            });
     }
 
     private void goToDashboard() {
@@ -74,6 +85,25 @@ public class LoginController {
         }
     }
 
+    private void goToChangePassword() {
+        try {
+            FXMLLoader dashboardLoader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/login/ChangeDefaultPassword.fxml"));
+            Parent dashboardRoot = dashboardLoader.load();
+
+            Scene currentScene = root.getScene();
+            Stage stage = (Stage) currentScene.getWindow();
+
+            currentScene.getStylesheets().clear();
+            currentScene.getStylesheets().add(
+                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/login/login.css")).toExternalForm()
+            );
+
+            currentScene.setRoot(dashboardRoot);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setupBindings() {
         usernameField.textProperty().bindBidirectional(viewModel.usernameProperty());
         passwordField.textProperty().bindBidirectional(viewModel.passwordProperty());
@@ -83,10 +113,12 @@ public class LoginController {
         viewModel.isLoadingProperty().addListener((obs, oldVal, isLoading) -> {
             if (isLoading){
                 loginBtn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                loginBtn.setDisable(true);
+                loginBtn.addEventFilter(MouseEvent.ANY, Event::consume);
+                loginBtn.addEventFilter(KeyEvent.ANY, Event::consume);
             } else {
                 loginBtn.setContentDisplay(ContentDisplay.TEXT_ONLY);
-                loginBtn.setDisable(false);
+                loginBtn.removeEventFilter(MouseEvent.ANY, Event::consume);
+                loginBtn.removeEventFilter(KeyEvent.ANY, Event::consume);
             }
         });
     }

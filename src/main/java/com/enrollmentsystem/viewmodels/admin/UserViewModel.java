@@ -2,6 +2,7 @@ package com.enrollmentsystem.viewmodels.admin;
 
 import com.enrollmentsystem.dtos.UserDTO;
 import com.enrollmentsystem.enums.Role;
+import com.enrollmentsystem.enums.UserStatus;
 import javafx.beans.property.*;
 
 public class UserViewModel {
@@ -12,6 +13,7 @@ public class UserViewModel {
     private final StringProperty username;
     private final StringProperty password;
     private final ObjectProperty<Role> role;
+    private final ObjectProperty<UserStatus> status;
 
     public UserViewModel(UserDTO dto) {
         this.userId = new SimpleIntegerProperty(dto.getUserId());
@@ -21,6 +23,7 @@ public class UserViewModel {
         this.username = new SimpleStringProperty(dto.getUsername());
         this.password = new SimpleStringProperty(dto.getPassword());
         this.role = new SimpleObjectProperty<>(dto.getRole());
+        this.status = new SimpleObjectProperty<>(dto.getStatus());
     }
 
     public IntegerProperty userIdProperty() { return userId; }
@@ -30,4 +33,5 @@ public class UserViewModel {
     public StringProperty usernameProperty() { return username; }
     public StringProperty passwordProperty() { return password; }
     public ObjectProperty<Role> roleProperty() { return role; }
+    public ObjectProperty<UserStatus> statusProperty() { return status; }
 }

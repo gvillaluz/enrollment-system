@@ -45,7 +45,6 @@ public class EnrollmentViewModel {
     }
 
     public void loadData(int pageIndex) {
-        enrollmentList.clear();
         isLoading.set(true);
 
         int offset = pageIndex * PAGE_LIMIT;
@@ -54,18 +53,17 @@ public class EnrollmentViewModel {
         CompletableFuture<List<EnrollmentDTO>> enrollmentTask = _service.loadLatest20Enrollments(gradeLevel, searchValue.get(), offset);
 
         CompletableFuture.allOf(countTask, enrollmentTask).thenAccept(v -> {
-            int totalRows = countTask.join();
+            Integer totalRows = countTask.join();
             List<EnrollmentDTO> enrollmentDTOS = enrollmentTask.join();
 
             Platform.runLater(() -> {
                 int pages = (int) Math.ceil((double) totalRows / PAGE_LIMIT);
                 totalPages.set(Math.max(pages, 1));
-                
-                List<EnrollmentSummaryViewModel> newItems = enrollmentDTOS.stream()
-                        .map(EnrollmentSummaryViewModel::new)
-                        .toList();
 
-                enrollmentList.setAll(newItems);
+                enrollmentList.setAll(enrollmentDTOS.stream()
+                        .map(EnrollmentSummaryViewModel::new)
+                        .toList());
+
                 isLoading.set(false);
             });
         })

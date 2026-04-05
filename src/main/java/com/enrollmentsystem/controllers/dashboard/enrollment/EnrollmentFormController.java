@@ -6,7 +6,7 @@ import com.enrollmentsystem.dtos.StrandDTO;
 import com.enrollmentsystem.dtos.TrackDTO;
 import com.enrollmentsystem.enums.Gender;
 import com.enrollmentsystem.enums.Semester;
-import com.enrollmentsystem.utils.Formatter;
+import com.enrollmentsystem.utils.StringFormatter;
 import com.enrollmentsystem.utils.ModernDatePickerSkin;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
@@ -16,25 +16,15 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.validation.Severity;
-import org.controlsfx.validation.ValidationResult;
 import org.controlsfx.validation.ValidationSupport;
 import org.controlsfx.validation.Validator;
-import org.controlsfx.validation.decoration.GraphicValidationDecoration;
-
-import java.time.LocalDate;
-import java.time.Period;
-import java.util.ArrayList;
-import java.util.List;
 
 public class EnrollmentFormController {
     @FXML private TabPane enrollmentPane;
@@ -216,8 +206,8 @@ public class EnrollmentFormController {
 
         dateField.setSkin(new ModernDatePickerSkin(dateField));
 
-        TextFormatter<Integer> ageFormatter = Formatter.formatStringToInteger(null);
-        TextFormatter<Integer> lastGrLvlFormatter = Formatter.formatStringToInteger(null);
+        TextFormatter<Integer> ageFormatter = StringFormatter.formatStringToInteger(null);
+        TextFormatter<Integer> lastGrLvlFormatter = StringFormatter.formatStringToInteger(null);
         ageField.setTextFormatter(ageFormatter);
         lastGradeLvlField.setTextFormatter(lastGrLvlFormatter);
 
@@ -392,6 +382,18 @@ public class EnrollmentFormController {
             @Override
             public Gender fromString(String s) {
                 return null;
+            }
+        });
+
+        sexDropdown.setButtonCell(new ListCell<>() {
+            @Override
+            protected void updateItem(Gender gender, boolean empty) {
+                super.updateItem(gender, empty);
+                if (empty || gender == null) {
+                    setText("<select one>");
+                } else {
+                    setText(gender.getGender());
+                }
             }
         });
 

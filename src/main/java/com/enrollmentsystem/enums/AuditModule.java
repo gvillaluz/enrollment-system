@@ -1,6 +1,7 @@
 package com.enrollmentsystem.enums;
 
 public enum AuditModule {
+    AUTH_MANAGEMENT("Auth_Management"),
     ENROLLMENT("Enrollment"),
     REQUIREMENTS("Requirements"),
     STUDENT_RECORDS("Student Records"),

@@ -14,38 +14,6 @@
     -fx-font-size: 1.375em;
 }
 
-.add-container .field-container .labels {
-    -fx-font-size: 14;
-}
-
-.add-container .field-container .fields {
-    -fx-background-color: transparent;
-    -fx-border-color: #ABABAB;
-    -fx-border-radius: 0;
-}
-
-.add-container .field-container .dropdown {
-    -fx-background-color: #D9D9D9;
-    -fx-border-color: #ABABAB;
-    -fx-padding: 0;
-}
-
-.add-container .save-add-btn {
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #FAFAFA;
-    -fx-pref-width: 148;
-    -fx-pref-height: 29;
-    -fx-background-color: #6988AC;
-    -fx-border-radius: 0;
-    -fx-background-radius: 0;
-    -fx-cursor: hand;
-}
-
-.add-container .save-add-btn:hover {
-    -fx-background-color: #90ABCA;
-}
-
 .record-container .record-title {
     -fx-font-size: 16;
 }
@@ -54,7 +22,6 @@
     -fx-underline: true;
     -fx-font-weight: bold;
     -fx-font-size: 0.875em;
-    -fx-cursor: hand;
 }
 
 .table-view {
@@ -64,7 +31,7 @@
 }
 
 .table-view .table-row-cell:hover {
-    -fx-background-color: lightgray;
+    -fx-background-color: #E5E5E5;
 }
 
 .table-row-cell:hover .table-cell {
@@ -73,4 +40,30 @@
 
 .table-row-cell:hover .separator .line {
     -fx-border-color: transparent; /* Match your orange theme on hover */
+}
+
+.add-user-btn {
+    -fx-background-color: #6988AC;
+    -fx-text-fill: #FAFAFA;
+    -fx-font-weight: bold;
+    -fx-font-size: 14;
+    -fx-cursor: hand;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+}
+
+.add-user-btn:hover {
+    -fx-background-color: #90ABCA;
+}
+
+.pagination .number-button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 2;
 }

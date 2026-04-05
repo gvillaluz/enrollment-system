@@ -35,3 +35,11 @@
     -fx-border-radius: 0;
     -fx-border-color: #ABABAB;
 }
+
+.dropdown {
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: #D9D9D9;
+    -fx-border-color: #ABABAB;
+    -fx-padding: 0;
+}

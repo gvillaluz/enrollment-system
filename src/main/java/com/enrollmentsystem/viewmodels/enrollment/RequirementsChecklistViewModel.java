@@ -33,8 +33,6 @@ public class RequirementsChecklistViewModel {
     private final int PAGE_LIMIT = 12;
 
     public void loadChecklist(int pageIndex) {
-        checklist.clear();
-
         int offset = pageIndex * PAGE_LIMIT;
 
         CompletableFuture<List<RequirementSummaryDTO>> listTask = _service.getRequirementsChecklist(searchValue.get(), offset);

@@ -1,14 +1,16 @@
 package com.enrollmentsystem.models;
 
+import com.enrollmentsystem.dtos.UserDTO;
+
 public class UserSession {
     private static UserSession instance;
-    private User user;
+    private UserDTO user;
 
-    private UserSession(User user) {
+    private UserSession(UserDTO user) {
         this.user = user;
     }
 
-    public static void login(User user) {
+    public static void login(UserDTO user) {
         instance = new UserSession(user);
     }
 
@@ -24,5 +26,5 @@ public class UserSession {
         instance = null;
     }
 
-    public User getUser() { return user; }
+    public UserDTO getUser() { return user; }
 }

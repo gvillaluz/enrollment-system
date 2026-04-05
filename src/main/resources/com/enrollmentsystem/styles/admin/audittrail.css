@@ -79,3 +79,46 @@
 .table-row-cell:hover .separator .line {
     -fx-border-color: transparent;
 }
+
+.date-picker-popup .month-year-pane .combo-box {
+    -fx-background-color: transparent;
+    -fx-border-color: #D1D5DB;
+    -fx-border-radius: 4;
+    -fx-font-size: 11px;
+}
+
+.date-picker-popup .month-year-pane .combo-box:hover {
+    -fx-background-color: #F3F4F6;
+}
+
+.date-picker-popup .day-cell.secondary {
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+    -fx-opacity: 0;
+}
+
+.date-picker-popup .day-cell.secondary:hover {
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup .day-cell.today {
+    -fx-border-color: #3B82F6;
+    -fx-border-width: 2;
+}
+
+.date-picker-popup .day-cell {
+    -fx-border-color: #F3F4F6;
+    -fx-border-width: 0.1;
+}
+
+.pagination .number-button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 2;
+}

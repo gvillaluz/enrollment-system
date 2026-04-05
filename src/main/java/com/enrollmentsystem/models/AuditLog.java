@@ -6,7 +6,9 @@ import com.enrollmentsystem.enums.AuditModule;
 import java.time.LocalDateTime;
 
 public class AuditLog {
+    private int logId;
     private int userId;
+    private String username;
     private AuditAction actionType;
     private AuditModule moduleAffected;
     private String targetKey;
@@ -15,8 +17,10 @@ public class AuditLog {
 
     public AuditLog() {}
 
-    public AuditLog(int userId, AuditAction actionType, AuditModule moduleAffected, String targetKey, String description, LocalDateTime timestamp) {
+    public AuditLog(int logId, int userId, String username, AuditAction actionType, AuditModule moduleAffected, String targetKey, String description, LocalDateTime timestamp) {
+        this.logId = logId;
         this.userId = userId;
+        this.username = username;
         this.actionType = actionType;
         this.moduleAffected = moduleAffected;
         this.targetKey = targetKey;
@@ -24,8 +28,14 @@ public class AuditLog {
         this.timestamp = timestamp;
     }
 
+    public int getLogId() { return logId; }
+    public void setLogId(int logId) { this.logId = logId; }
+
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
+
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
     public AuditAction getActionType() { return actionType; }
     public void setActionType(AuditAction actionType) { this.actionType = actionType; }

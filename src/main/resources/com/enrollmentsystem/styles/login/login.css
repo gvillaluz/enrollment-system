@@ -49,3 +49,18 @@
 .password-eye-icon {
     -fx-icon-color: #333333;
 }
+
+.password-requirements {
+    -fx-text-fill: #6988AC;
+    -fx-font-weight: bold;
+}
+
+.field-error {
+    -fx-border-color: #c90a0a !important;
+    -fx-border-width: 2px !important;
+}
+
+.field-success {
+    -fx-border-color: #27ae60 !important;
+    -fx-border-width: 2px !important;
+}

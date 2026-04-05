@@ -2,11 +2,10 @@ package com.enrollmentsystem.utils;
 
 import javafx.scene.control.TextFormatter;
 import javafx.util.StringConverter;
-import javafx.util.converter.IntegerStringConverter;
 
 import java.util.function.UnaryOperator;
 
-public class Formatter {
+public class StringFormatter {
     public static TextFormatter<Integer> formatStringToInteger(Integer defaultValue) {
         UnaryOperator<TextFormatter.Change> filter = change -> {
             String newText = change.getControlNewText();

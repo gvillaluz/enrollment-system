@@ -1,5 +1,6 @@
 package com.enrollmentsystem.config;
 
+import com.enrollmentsystem.models.User;
 import com.enrollmentsystem.repositories.*;
 import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.services.*;
@@ -20,8 +21,10 @@ public class AppContext {
     private static SectionRepository sectionRepository;
     private static SchoolYearRepository schoolYearRepository;
     private static RequirementRepository requirementRepository;
+    private static ArchiveRepository archiveRepository;
 
     private static AuthService authService;
+    private static UserService userService;
     private static StudentService studentService;
     private static EnrollmentService enrollmentService;
     private static TrackService trackService;
@@ -29,6 +32,7 @@ public class AppContext {
     private static AuditService auditService;
     private static SectionService sectionService;
     private static RequirementService requirementService;
+    private static ArchiveService archiveService;
 
     public static AcademicRepository getAcademicRepository() {
         if (academicRepository == null) {
@@ -64,9 +68,23 @@ public class AppContext {
         return userRepository;
     }
 
+    public static UserService getUserService() {
+        if (userService == null) {
+            userService = new UserService(
+                    getUserRepository(),
+                    getAuditRepository()
+            );
+        }
+
+        return userService;
+    }
+
     public static AuthService getAuthService() {
         if (authService == null) {
-            authService = new AuthService(getUserRepository());
+            authService = new AuthService(
+                    getUserRepository(),
+                    getAuditRepository()
+            );
         }
         return authService;
     }
@@ -181,5 +199,23 @@ public class AppContext {
             schoolYearRepository = new SchoolYearRepository();
         }
         return schoolYearRepository;
+    }
+
+    public static ArchiveRepository getArchiveRepository() {
+        if (archiveRepository == null) {
+            archiveRepository = new ArchiveRepository();
+        }
+        return archiveRepository;
+    }
+
+    public static ArchiveService getArchiveService() {
+        if (archiveService == null) {
+            archiveService = new ArchiveService(
+                    getArchiveRepository(),
+                    getAuditRepository(),
+                    getSchoolYearRepository()
+            );
+        }
+        return archiveService;
     }
 }

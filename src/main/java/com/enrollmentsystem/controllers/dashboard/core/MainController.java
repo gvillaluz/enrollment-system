@@ -1,9 +1,11 @@
 package com.enrollmentsystem.controllers.dashboard.core;
 
 import com.enrollmentsystem.controllers.base.BaseController;
+import com.enrollmentsystem.dtos.UserDTO;
 import com.enrollmentsystem.models.User;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.utils.ViewNavigator;
+import com.enrollmentsystem.viewmodels.core.MainViewModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -26,6 +28,8 @@ public class MainController extends BaseController {
     @FXML private VBox adminTabs, userInfoContainer, subMenuBtns;
 
     private Button activeButton;
+
+    private final MainViewModel viewModel = new MainViewModel();
 
     @FXML
     public void initialize() {
@@ -68,10 +72,11 @@ public class MainController extends BaseController {
     @FXML
     private void logoutUser() {
         BaseController.logout();
+        viewModel.logoutUser();
     }
 
     private void setupLabels() {
-        User user = BaseController.session.getUser();
+        UserDTO user = BaseController.session.getUser();
         welcomeLabel.setText("Welcome, " + user.getFirstName() + "!");
         usernameLabel.setText(user.getFirstName() + " " + user.getLastName());
         roleLabel.setText(user.getRole().getValue());

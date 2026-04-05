@@ -1,9 +1,9 @@
 package com.enrollmentsystem.controllers.dashboard.academic;
 
 import com.enrollmentsystem.App;
+import com.enrollmentsystem.utils.filters.ModalConfig;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
-import com.enrollmentsystem.viewmodels.academic.TrackFormViewModel;
 import com.enrollmentsystem.viewmodels.academic.TrackManagementViewModel;
 import com.enrollmentsystem.viewmodels.academic.TrackViewModel;
 import javafx.application.Platform;
@@ -12,11 +12,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
-import javafx.stage.PopupWindow;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
-import org.controlsfx.validation.ValidationSupport;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
@@ -186,9 +184,13 @@ public class TrackManagementController {
                     });
         };
 
-        ViewNavigator.showDeleteModal(
+        ViewNavigator.showConfirmModal(
                 (Stage) currentStage,
-                onConfirmDelete
+                new ModalConfig(
+                        "Delete",
+                        "are you sure you want to delete this record?",
+                        onConfirmDelete
+                )
         );
     }
 }

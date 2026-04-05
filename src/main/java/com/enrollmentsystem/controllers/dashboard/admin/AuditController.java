@@ -2,10 +2,14 @@ package com.enrollmentsystem.controllers.dashboard.admin;
 
 import com.enrollmentsystem.enums.AuditAction;
 import com.enrollmentsystem.enums.AuditModule;
+import com.enrollmentsystem.utils.DateFormatter;
+import com.enrollmentsystem.utils.ModernDatePickerSkin;
 import com.enrollmentsystem.viewmodels.admin.AuditTrailViewModel;
 import com.enrollmentsystem.viewmodels.admin.AuditViewModel;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,9 +24,11 @@ import java.util.Objects;
 
 public class AuditController {
     @FXML private VBox userFilterContainer;
+    @FXML private Pagination pagination;
 
     @FXML private ComboBox<AuditAction> actionSelect;
     @FXML private ComboBox<AuditModule> moduleSelect;
+    @FXML private DatePicker dateFromPicker, dateToPicker;
 
     @FXML private Button clearFilterBtn, applyFilterBtn;
 
@@ -37,14 +43,45 @@ public class AuditController {
 
     @FXML
     private void initialize() {
-        setupDropdownSelects();
+        setupFilters();
         setupUserSearchbar();
         setupTable();
+        setupPagination();
+        setupLoadingState();
+
+        auditTable.setItems(viewModel.getAuditList());
+    }
+
+    @FXML
+    public void clearFilters() {
+        viewModel.clearFilters();
+        actionSelect.getSelectionModel().clearSelection();
+        actionSelect.setValue(null);
+        actionSelect.setPromptText("<select one>");
+
+        moduleSelect.getSelectionModel().clearSelection();
+        moduleSelect.setValue(null);
+        moduleSelect.setPromptText("<select one>");
+
+        if (pagination.getCurrentPageIndex() == 0) {
+            viewModel.loadAuditList(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
+    }
+
+    @FXML
+    public void applyFilters() {
+        if (pagination.getCurrentPageIndex() == 0) {
+            viewModel.loadAuditList(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
     }
 
     private void setupUserSearchbar() {
         CustomTextField searchField = new CustomTextField();
-        searchField.setPromptText("Enter Student Name");
+        searchField.setPromptText("Enter username");
         searchField.getStyleClass().add("searchbar");
         searchField.setMinWidth(Region.USE_COMPUTED_SIZE);
         searchField.setMinHeight(27);
@@ -64,10 +101,12 @@ public class AuditController {
 
         searchField.setLeft(iconContainer);
 
+        searchField.textProperty().bindBidirectional(viewModel.usernameFilterProperty());
+
         userFilterContainer.getChildren().add(searchField);
     }
 
-    private void setupDropdownSelects() {
+    private void setupFilters() {
         actionSelect.valueProperty().bindBidirectional(viewModel.actionFilterProperty());
         actionSelect.setItems(FXCollections.observableArrayList(AuditAction.values()));
 
@@ -77,7 +116,7 @@ public class AuditController {
         actionSelect.setConverter(new StringConverter<AuditAction>() {
             @Override
             public String toString(AuditAction auditAction) {
-                return (auditAction == null) ? "" : auditAction.getValue();
+                return (auditAction == null) ? null : auditAction.getValue();
             }
 
             @Override
@@ -85,11 +124,22 @@ public class AuditController {
                 return null;
             }
         });
+        actionSelect.setButtonCell(new ListCell<AuditAction>(){
+            @Override
+            protected void updateItem(AuditAction action, boolean empty) {
+                super.updateItem(action, empty);
+                if (empty || action == null) {
+                    setText("<select one>");
+                } else {
+                    setText(action.getValue());
+                }
+            }
+        });
 
         moduleSelect.setConverter(new StringConverter<AuditModule>() {
             @Override
             public String toString(AuditModule auditModule) {
-                return (auditModule == null) ? "" : auditModule.getValue();
+                return (auditModule == null) ? null : auditModule.getValue();
             }
 
             @Override
@@ -97,6 +147,24 @@ public class AuditController {
                 return null;
             }
         });
+
+        moduleSelect.setButtonCell(new ListCell<AuditModule>(){
+            @Override
+            protected void updateItem(AuditModule module, boolean empty) {
+                super.updateItem(module, empty);
+                if (empty || module == null) {
+                    setText("<select one>");
+                } else {
+                    setText(module.getValue());
+                }
+            }
+        });
+
+        dateFromPicker.valueProperty().bindBidirectional(viewModel.dateFromFilterProperty());
+        dateToPicker.valueProperty().bindBidirectional(viewModel.dateToFilterProperty());
+
+        dateFromPicker.setSkin(new ModernDatePickerSkin(dateFromPicker));
+        dateToPicker.setSkin(new ModernDatePickerSkin(dateToPicker));
     }
 
     private void setupTable() {
@@ -104,6 +172,18 @@ public class AuditController {
         timestampCol.setCellValueFactory(cell -> cell.getValue().timestampProperty());
         userCol.setCellValueFactory(cell -> cell.getValue().usernameProperty());
         descriptionCol.setCellValueFactory(cell -> cell.getValue().descriptionProperty());
+
+        timestampCol.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(DateFormatter.formatAuditTimestamp(item));
+                }
+            }
+        });
 
         actionCol.setCellValueFactory(cell -> cell.getValue().actionProperty());
         actionCol.setCellFactory(col -> new TableCell<>() {
@@ -132,5 +212,30 @@ public class AuditController {
                 }
             }
         });
+    }
+
+    private void setupPagination() {
+        pagination.pageCountProperty().bind(viewModel.totalPagesProperty());
+
+        pagination.setPageFactory(pageIndex -> {
+            viewModel.loadAuditList(pageIndex);
+            return auditTable;
+        });
+    }
+
+    private void setupLoadingState() {
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setMaxSize(50, 50);
+        progressIndicator.getStyleClass().add("progress-indicator");
+
+        Label emptyLabel = new Label("No records found.");
+
+        auditTable.placeholderProperty().bind(
+                Bindings.when(viewModel.loadingProperty())
+                        .then((Node) progressIndicator)
+                        .otherwise((Node) emptyLabel)
+        );
+
+        pagination.disableProperty().bind(viewModel.loadingProperty());
     }
 }

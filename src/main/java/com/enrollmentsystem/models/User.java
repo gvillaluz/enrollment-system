@@ -1,6 +1,7 @@
 package com.enrollmentsystem.models;
 
 import com.enrollmentsystem.enums.Role;
+import com.enrollmentsystem.enums.UserStatus;
 
 public class User {
     private int id;
@@ -10,8 +11,11 @@ public class User {
     private String username;
     private String password;
     private Role role;
+    private UserStatus status;
 
-    public User(int id, String lastName, String firstName, String middleName, String username, String password, Role role) {
+    public User() {}
+
+    public User(int id, String lastName, String firstName, String middleName, String username, String password, Role role, UserStatus status) {
         this.id = id;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -19,6 +23,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.status = status;
     }
 
     public int getId() { return id; }
@@ -41,4 +46,7 @@ public class User {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
 }

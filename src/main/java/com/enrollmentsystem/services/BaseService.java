@@ -18,10 +18,10 @@ public abstract class BaseService {
         _auditRepo = auditRepo;
     }
 
-    protected  void logActivity(Connection conn, String targetKey, AuditAction action, AuditModule module, String description) {
+    protected  void logActivity(Connection conn, int userId, String targetKey, AuditAction action, AuditModule module, String description) {
         try {
             AuditLog audit = new AuditLogBuilder()
-                    .user(UserSession.getInstance().getUser().getId())
+                    .user(userId)
                     .action(action)
                     .module(module)
                     .target(targetKey)
@@ -35,9 +35,21 @@ public abstract class BaseService {
         }
     }
 
+    protected void logActivity(Connection conn, String targetKey, AuditAction action, AuditModule module, String description) {
+        logActivity(conn, UserSession.getInstance().getUser().getUserId(), targetKey, action, module, description);
+    }
+
     protected void logActivity(String targetKey, AuditAction action, AuditModule module, String description) {
         try (Connection conn = DatabaseConnection.getConnection()) {
-            logActivity(conn, targetKey, action, module, description);
+            logActivity(conn, UserSession.getInstance().getUser().getUserId(), targetKey, action, module, description);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected void logActivity(int userId, String targetKey, AuditAction action, AuditModule module, String description) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            logActivity(conn, userId, targetKey, action, module, description);
         } catch (SQLException e) {
             e.printStackTrace();
         }

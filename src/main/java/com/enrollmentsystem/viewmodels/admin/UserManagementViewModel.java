@@ -1,31 +1,86 @@
 package com.enrollmentsystem.viewmodels.admin;
 
+import com.enrollmentsystem.config.AppContext;
 import com.enrollmentsystem.dtos.UserDTO;
 import com.enrollmentsystem.enums.Role;
+import com.enrollmentsystem.enums.UserStatus;
+import com.enrollmentsystem.services.UserService;
+import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-public class UserManagementViewModel {
-    private final UserViewModel formInstance = new UserViewModel(new UserDTO());
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
+public class UserManagementViewModel {
+    private final IntegerProperty totalPages = new SimpleIntegerProperty(1);
+    private final BooleanProperty isLoading = new SimpleBooleanProperty(true);
+
+    private final int PAGE_LIMIT = 15;
+
+    private final UserService _service = AppContext.getUserService();
     private final ObservableList<UserViewModel> userList = FXCollections.observableArrayList();
 
-    public UserViewModel getFormInstance() { return formInstance; }
+    public IntegerProperty totalPagesProperty() { return totalPages; }
+    public BooleanProperty loadingProperty() { return isLoading; }
 
     public ObservableList<UserViewModel> getUserList() { return userList; }
 
-    public void loadUsers() {
-        userList.addAll(
-                new UserViewModel(new UserDTO(1, "Gabriel", "Kian", "L.", "kgabriel", "pass123", Role.ADMIN)),
-                new UserViewModel(new UserDTO(2, "Santos", "Maria", "D.", "msantos", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(3, "Cruz", "Juan", "P.", "jcruz", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(4, "Reyes", "Elena", "S.", "ereyes", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(5, "Bautista", "Ricardo", "M.", "rbautista", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(6, "Dela Cruz", "Ana", "G.", "adelacruz", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(7, "Villanueva", "Mark", "T.", "mvillanueva", "pass123", Role.ADMIN)),
-                new UserViewModel(new UserDTO(8, "Aquino", "Liza", "F.", "laquino", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(9, "Mercado", "Paolo", "B.", "pmercado", "pass123", Role.ENROLLMENT_STAFF)),
-                new UserViewModel(new UserDTO(10, "Pascual", "Sonia", "C.", "spascual", "pass123", Role.ENROLLMENT_STAFF))
-        );
+    public void loadUsers(int pageIndex) {
+        userList.clear();
+        isLoading.set(true);
+
+        int offset = pageIndex * PAGE_LIMIT;
+
+        CompletableFuture<List<UserDTO>> listTask = _service.getUsers(offset);
+        CompletableFuture<Integer> countTask = _service.getTotalCount();
+
+        CompletableFuture.allOf(listTask, countTask).thenAccept(v -> {
+            List<UserDTO> userDTOS = listTask.join();
+            Integer totalRows = countTask.join();
+
+            Platform.runLater(() -> {
+                int pages = (int) Math.ceil((double) totalRows / PAGE_LIMIT);
+                totalPages.set(Math.max(pages, 1));
+
+                userList.setAll(
+                        userDTOS.stream().map(UserViewModel::new).toList()
+                );
+
+                isLoading.set(false);
+            });
+        })
+        .exceptionally(ex -> {
+            Platform.runLater(() -> isLoading.set(false));
+            return null;
+        });
+    }
+
+    public CompletableFuture<Boolean> updateUserStatus(int userId, UserStatus status) {
+        return _service.updateUserStatus(userId, status)
+                .thenApply(newStatus -> {
+                    if (newStatus != null) {
+                        Platform.runLater(() -> {
+                            userList.stream()
+                                    .filter(u -> u.userIdProperty().get() == userId)
+                                    .findFirst()
+                                    .ifPresent(u -> u.statusProperty().set(newStatus));
+                        });
+                    }
+                    return true;
+                });
+    }
+
+    public CompletableFuture<Boolean> resetPassword(int userId) {
+        if (userId <= 0)
+            return CompletableFuture.failedFuture(
+                    new IllegalArgumentException("Invalid user.")
+            );
+
+        return _service.resetPasswordToDefault(userId);
     }
 }

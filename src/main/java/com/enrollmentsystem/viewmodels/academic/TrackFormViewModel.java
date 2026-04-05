@@ -39,12 +39,12 @@ public class TrackFormViewModel {
         String code = trackCode.get();
         String desc = description.get();
 
-        if (originalTrack == null) {
-            if (ValidationHelper.isNullOrEmpty(code) || ValidationHelper.isNullOrEmpty(desc))
-                return CompletableFuture.failedFuture(
-                        new IllegalArgumentException("Track Code and Description must not be empty.")
-                );
+        if (ValidationHelper.isNullOrEmpty(code) || ValidationHelper.isNullOrEmpty(desc))
+            return CompletableFuture.failedFuture(
+                    new IllegalArgumentException("Track Code and Description must not be empty.")
+            );
 
+        if (originalTrack == null) {
             var trackDTO = new TrackDTO();
             trackDTO.setTrackCode(code);
             trackDTO.setDescription(desc);
@@ -57,11 +57,6 @@ public class TrackFormViewModel {
                         return success;
                     });
         } else {
-            if (ValidationHelper.isNullOrEmpty(code) || ValidationHelper.isNullOrEmpty(desc))
-                return CompletableFuture.failedFuture(
-                        new IllegalArgumentException("Track Code and Description must not be empty.")
-                );
-
             if (originalTrack.trackCodeProperty().get().equals(code) && originalTrack.descriptionProperty().get().equals(desc)) {
                 return CompletableFuture.completedFuture(true);
             }

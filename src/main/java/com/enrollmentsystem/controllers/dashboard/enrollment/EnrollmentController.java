@@ -5,7 +5,7 @@
     import com.enrollmentsystem.dtos.EnrollmentFormDTO;
     import com.enrollmentsystem.enums.EnrollmentStatus;
     import com.enrollmentsystem.enums.Semester;
-    import com.enrollmentsystem.models.UserSession;
+    import com.enrollmentsystem.utils.filters.ModalConfig;
     import com.enrollmentsystem.utils.NotificationHelper;
     import com.enrollmentsystem.utils.ViewNavigator;
     import com.enrollmentsystem.viewmodels.enrollment.EnrollmentSummaryViewModel;
@@ -100,6 +100,8 @@
                 } else {
                     pagination.setCurrentPageIndex(0);
                 }
+
+                Platform.runLater(searchField::requestFocus);
             });
 
             viewModel.searchValueProperty().addListener((obs, oldVal, newVal) -> {
@@ -284,10 +286,13 @@
 
         private void handleArchive(EnrollmentSummaryViewModel enrollment) {
             Window currentStage = enrollmentTable.getScene().getWindow();
+            currentStage.getScene().setCursor(Cursor.WAIT);
+
             Runnable onConfirmDelete = () -> {
                 viewModel.archiveEnrollment(enrollment, pagination.getCurrentPageIndex())
                         .thenAccept(success -> {
                             Platform.runLater(() -> {
+                                currentStage.getScene().setCursor(Cursor.DEFAULT);
                                 if (success) {
                                     NotificationHelper.showToast(
                                             currentStage,
@@ -307,6 +312,7 @@
                             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 
                             Platform.runLater(() -> {
+                                currentStage.getScene().setCursor(Cursor.DEFAULT);
                                 NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
                             });
 
@@ -314,9 +320,13 @@
                         });
             };
 
-            ViewNavigator.showArchiveModal(
+            ViewNavigator.showConfirmModal(
                     (Stage) currentStage,
-                    onConfirmDelete
+                    new ModalConfig(
+                            "Archive",
+                            "are you sure you want to archive this record?",
+                            onConfirmDelete
+                    )
             );
         }
 
@@ -361,7 +371,7 @@
             progressIndicator.setMaxSize(50, 50);
             progressIndicator.getStyleClass().add("progress-indicator");
 
-            Label emptyLabel = new Label("No students found.");
+            Label emptyLabel = new Label("No records found.");
 
             enrollmentTable.placeholderProperty().bind(
                     Bindings.when(viewModel.loadingProperty())
@@ -369,7 +379,6 @@
                             .otherwise((Node) emptyLabel)
             );
 
-            searchbarContainer.disableProperty().bind(viewModel.loadingProperty());
             pagination.disableProperty().bind(viewModel.loadingProperty());
         }
     }

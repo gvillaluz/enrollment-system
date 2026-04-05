@@ -24,7 +24,7 @@ public class TrackRepository {
                 tracks.add(track);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("Failed to load tracks: " + e.getMessage());
         }
 
         return tracks;
@@ -48,7 +48,6 @@ public class TrackRepository {
             }
             return null;
         } catch (SQLException e) {
-            e.printStackTrace();
             System.out.println("Error in saving track: " + e.getMessage());
             return null;
         }
@@ -70,6 +69,7 @@ public class TrackRepository {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
             return false;
         }
     }

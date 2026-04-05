@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -17,12 +18,11 @@
          <children>
             <Label styleClass="title-label" text="Audit Logs">
                <VBox.margin>
-                  <Insets bottom="10.0" />
+                  <Insets />
                </VBox.margin>
             </Label>
-            <VBox prefHeight="173.0" prefWidth="1309.0" spacing="10.0" styleClass="filter-container">
+            <VBox prefHeight="87.0" prefWidth="1040.0" spacing="10.0" styleClass="filter-container">
                <children>
-                  <Label styleClass="title" text="View and monitor all system activity and user actions" />
                   <HBox prefHeight="64.0" prefWidth="1269.0" spacing="20.0" styleClass="filter-row">
                      <children>
                         <VBox fx:id="userFilterContainer" alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="5.0" HBox.hgrow="ALWAYS">
@@ -56,13 +56,13 @@
                         </VBox>
                      </children>
                      <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        <Insets left="20.0" right="20.0" />
                      </padding>
                   </HBox>
                   <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                      <children>
-                        <Button fx:id="clearFilterBtn" maxHeight="29.0" maxWidth="101.0" minHeight="29.0" minWidth="101.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="101.0" styleClass="clear-filter" text="Clear" />
-                        <Button fx:id="applyFilterBtn" maxHeight="29.0" maxWidth="148.0" minHeight="29.0" minWidth="148.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="148.0" styleClass="apply-filter" text="Apply Filters" />
+                        <Button fx:id="clearFilterBtn" maxHeight="29.0" maxWidth="101.0" minHeight="29.0" minWidth="101.0" mnemonicParsing="false" onAction="#clearFilters" prefHeight="29.0" prefWidth="101.0" styleClass="clear-filter" text="Clear" />
+                        <Button fx:id="applyFilterBtn" maxHeight="29.0" maxWidth="148.0" minHeight="29.0" minWidth="148.0" mnemonicParsing="false" onAction="#applyFilters" prefHeight="29.0" prefWidth="148.0" styleClass="apply-filter" text="Apply Filters" />
                      </children>
                      <padding>
                         <Insets right="20.0" />
@@ -73,7 +73,7 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
                <VBox.margin>
-                  <Insets bottom="10.0" />
+                  <Insets />
                </VBox.margin>
             </VBox>
             <VBox prefHeight="200.0" prefWidth="100.0" styleClass="table-container" VBox.vgrow="ALWAYS">
@@ -81,7 +81,7 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
                <children>
-                  <TableView fx:id="auditTable" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="auditTable" prefHeight="326.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
                      <columns>
                         <TableColumn fx:id="logIdCol" prefWidth="75.0" sortable="false" text="Log ID" />
                         <TableColumn fx:id="timestampCol" prefWidth="75.0" sortable="false" text="Timestamp" />
@@ -94,9 +94,10 @@
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                      </columnResizePolicy>
                   </TableView>
+                  <Pagination fx:id="pagination" prefHeight="27.0" prefWidth="1000.0" VBox.vgrow="ALWAYS" />
                </children>
                <VBox.margin>
-                  <Insets bottom="50.0" />
+                  <Insets bottom="10.0" />
                </VBox.margin>
             </VBox>
          </children>

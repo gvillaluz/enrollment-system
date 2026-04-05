@@ -126,7 +126,7 @@ public class EnrollmentService extends BaseService {
 
                     Enrollment enrollment = EnrollmentMapper.toNewModel(dto);
                     enrollment.setSchoolYearId(activeSchoolYrId);
-                    enrollment.setUserId(UserSession.getInstance().getUser().getId());
+                    enrollment.setUserId(UserSession.getInstance().getUser().getUserId());
 
                     if (_enrollmentRepo.checkEnrollmentExists(conn, enrollment.getStudentLrn(), enrollment.getSemTerm(), activeSchoolYrId)) {
                         throw new IllegalArgumentException("Student has already been enrolled in this school year.");

@@ -8,6 +8,8 @@ public class SchoolYear {
     private String endYear;
     private SchoolYearStatus status;
 
+    public SchoolYear() {}
+
     public SchoolYear(int schoolYearId, String startYear, String endYear, SchoolYearStatus status) {
         this.schoolYearId = schoolYearId;
         this.startYear = startYear;

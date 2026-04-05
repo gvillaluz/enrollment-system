@@ -1,6 +1,7 @@
 package com.enrollmentsystem.dtos;
 
 import com.enrollmentsystem.enums.Role;
+import com.enrollmentsystem.enums.UserStatus;
 
 public class UserDTO {
     private int userId;
@@ -10,17 +11,11 @@ public class UserDTO {
     private String username;
     private String password;
     private Role role;
+    private UserStatus status;
 
-    public UserDTO() {
-        lastName = "";
-        firstName = "";
-        middleName = "";
-        username = "";
-        password = "";
-        role = null;
-    }
+    public UserDTO() {}
 
-    public UserDTO(int userId, String lastName, String firstName, String middleName, String username, String password, Role role) {
+    public UserDTO(int userId, String lastName, String firstName, String middleName, String username, String password, Role role, UserStatus status) {
         this.userId = userId;
         this.lastName = lastName;
         this.firstName = firstName;
@@ -28,6 +23,7 @@ public class UserDTO {
         this.username = username;
         this.password = password;
         this.role = role;
+        this.status = status;
     }
 
     public int getUserId() { return userId; }
@@ -50,4 +46,7 @@ public class UserDTO {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+
+    public UserStatus getStatus() { return status; }
+    public void setStatus(UserStatus status) { this.status = status; }
 }

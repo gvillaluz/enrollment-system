@@ -1,6 +1,7 @@
 package com.enrollmentsystem.controllers.dashboard.academic;
 
 import com.enrollmentsystem.App;
+import com.enrollmentsystem.utils.filters.ModalConfig;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
 import com.enrollmentsystem.viewmodels.academic.StrandManagementViewModel;
@@ -16,7 +17,6 @@ import javafx.stage.Window;
 import javafx.util.Callback;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import javax.tools.Tool;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -178,9 +178,13 @@ public class StrandManagementController {
                     });
         };
 
-        ViewNavigator.showDeleteModal(
+        ViewNavigator.showConfirmModal(
                 (Stage) currentStage,
-                onConfirmDelete
+                new ModalConfig(
+                        "Delete",
+                        "are you sure you want to delete this record?",
+                        onConfirmDelete
+                )
         );
     }
 }

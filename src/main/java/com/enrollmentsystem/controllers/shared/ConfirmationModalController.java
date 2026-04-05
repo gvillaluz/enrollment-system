@@ -1,11 +1,16 @@
 package com.enrollmentsystem.controllers.shared;
 
+import com.enrollmentsystem.utils.filters.ModalConfig;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class ConfirmationModalController {
+    @FXML private Label titleLabel, messageLabel;
+    @FXML private Button confirmBtn;
 
     private Runnable onConfirmAction;
 
@@ -23,8 +28,18 @@ public class ConfirmationModalController {
         close(event);
     }
 
-    public void setup(Runnable onConfirmAction) {
-        this.onConfirmAction = onConfirmAction;
+    public void setup(ModalConfig config) {
+        this.onConfirmAction = config.getOnConfirm();
+        titleLabel.setText(config.getTitle());
+        messageLabel.setText(config.getMessage());
+
+        if (config.getTitle().equals("Delete")) {
+            confirmBtn.getStyleClass().add("delete");
+            confirmBtn.setText("Delete");
+        } else {
+            confirmBtn.getStyleClass().add("archive");
+            confirmBtn.setText("Continue");
+        }
     }
 
     private void close(ActionEvent event) {
