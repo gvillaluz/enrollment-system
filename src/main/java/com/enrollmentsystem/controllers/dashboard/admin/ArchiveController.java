@@ -170,10 +170,14 @@ public class ArchiveController {
 
                                 pane.setSpacing(0);
 
-                                ArchiveViewModel record = getTableView().getItems().get(getIndex());
-
-                                editBox.setOnMouseClicked(event -> handleRestore(record));
-                                deleteBox.setOnMouseClicked(event -> handleDelete(record));
+                                editBox.setOnMouseClicked(event -> {
+                                    ArchiveViewModel record = getTableView().getItems().get(getIndex());
+                                    handleRestore(record);
+                                });
+                                deleteBox.setOnMouseClicked(event -> {
+                                    ArchiveViewModel record = getTableView().getItems().get(getIndex());
+                                    handleDelete(record);
+                                });
                             }
 
                             @Override
