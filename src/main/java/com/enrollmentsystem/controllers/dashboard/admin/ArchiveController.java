@@ -18,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.util.Callback;
@@ -159,7 +160,9 @@ public class ArchiveController {
                                 editBox.setAlignment(Pos.CENTER);
                                 deleteBox.setAlignment(Pos.CENTER);
 
-                                HBox.setHgrow(editBox, javafx.scene.layout.Priority.ALWAYS);
+                                HBox.setHgrow(editBox, Priority.ALWAYS);
+                                HBox.setHgrow(deleteBox, Priority.ALWAYS);
+
                                 editBox.setPrefWidth(1);
                                 editBox.setMaxWidth(Double.MAX_VALUE);
                                 deleteBox.setPrefWidth(1);

@@ -36,6 +36,12 @@
     -fx-border-color: #ABABAB;
 }
 
+.btn-action {
+    -fx-underline: true;
+    -fx-font-weight: bold;
+    -fx-font-size: 0.875em;
+}
+
 .dropdown {
     -fx-border-radius: 0;
     -fx-background-radius: 0;
