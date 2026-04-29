@@ -270,8 +270,14 @@
 
         private void addStudent(ActionEvent event) {
             Button btn = (Button) event.getSource();
+            Scene rootScene = btn.getScene();
             Stage rootWindow = (Stage) btn.getScene().getWindow();
+
+            rootScene.setCursor(Cursor.WAIT);
+
             ViewNavigator.showModal(loadModal(null), rootWindow);
+
+            rootScene.setCursor(Cursor.DEFAULT);
         }
 
         private void handleEdit(EnrollmentSummaryViewModel student) {
