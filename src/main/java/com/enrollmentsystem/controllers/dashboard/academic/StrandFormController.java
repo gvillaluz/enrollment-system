@@ -2,9 +2,9 @@ package com.enrollmentsystem.controllers.dashboard.academic;
 
 import com.enrollmentsystem.dtos.TrackDTO;
 import com.enrollmentsystem.utils.NotificationHelper;
-import com.enrollmentsystem.viewmodels.academic.StrandFormViewModel;
-import com.enrollmentsystem.viewmodels.academic.StrandManagementViewModel;
-import com.enrollmentsystem.viewmodels.academic.StrandViewModel;
+import com.enrollmentsystem.viewmodels.academic.strand.StrandFormViewModel;
+import com.enrollmentsystem.viewmodels.academic.strand.StrandManagementViewModel;
+import com.enrollmentsystem.viewmodels.academic.strand.StrandViewModel;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
@@ -25,7 +25,6 @@ public class StrandFormController {
     @FXML private Label titleLabel;
 
     private final StrandFormViewModel formViewModel = new StrandFormViewModel();
-    private StrandManagementViewModel viewModel;
 
     @FXML
     public void initialize() {
@@ -60,7 +59,7 @@ public class StrandFormController {
                     Platform.runLater(() -> {
                         Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                         NotificationHelper.showToast(mainDashboard, cause.getMessage(), "error");
-                        ex.printStackTrace();
+                        System.out.println(cause.getMessage());
                     });
                     return null;
                 });
@@ -115,6 +114,4 @@ public class StrandFormController {
         String label = strand != null ? "Edit SHS Strand" : "Add New Strand";
         titleLabel.setText(label);
     }
-
-    public void setViewModel(StrandManagementViewModel viewModel) { this.viewModel = viewModel; }
 }

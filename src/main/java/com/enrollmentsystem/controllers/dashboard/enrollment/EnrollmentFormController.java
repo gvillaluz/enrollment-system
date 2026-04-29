@@ -10,7 +10,7 @@ import com.enrollmentsystem.utils.StringFormatter;
 import com.enrollmentsystem.utils.ModernDatePickerSkin;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
-import com.enrollmentsystem.viewmodels.enrollment.EnrollmentFormViewModel;
+import com.enrollmentsystem.viewmodels.enrollment.addstudent.EnrollmentFormViewModel;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -116,7 +116,6 @@ public class EnrollmentFormController {
                         Platform.runLater(() -> {
                             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                             NotificationHelper.showToast(mainDashboard, cause.getMessage(), "error");
-                            ex.printStackTrace();
                         });
                         return null;
                     });
@@ -178,15 +177,19 @@ public class EnrollmentFormController {
         viewModel.setEditData(dto);
     }
 
-    private void setupFieldsAndValidation() {
+    public void applyEditMode() {
         Platform.runLater(() -> {
             lrnField.setDisable(viewModel.isEditing);
         });
+    }
 
+    private void setupFieldsAndValidation() {
         PauseTransition debounce = new PauseTransition(Duration.millis(500));
 
         lrnField.textProperty().addListener((obs, oldVal, newVal) -> {
             debounce.stop();
+
+            if (viewModel.isEditing) return;
 
             if (newVal != null && newVal.length() == 12) {
                 debounce.setOnFinished(event -> {
@@ -338,6 +341,15 @@ public class EnrollmentFormController {
             @Override
             public StrandDTO fromString(String s) {
                 return null;
+            }
+        });
+
+        viewModel.getAcademicInformationVM().sectionIdProperty().addListener((obs, oldVal, newId) -> {
+            if (newId != null && newId.intValue() > 0 && !sectionDropdown.getItems().isEmpty()) {
+                sectionDropdown.getItems().stream()
+                        .filter(s -> s.getSectionId() == newId.intValue())
+                        .findFirst()
+                        .ifPresent(s -> sectionDropdown.setValue(s));
             }
         });
 

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/AcademicRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/ArchiveRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/AuditRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/BatchSectioningRepository.java" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/DashboardRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/EnrollmentRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/RequirementRepository.java" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/src/main/java/com/enrollmentsystem/repositories/SchoolYearRepository.java" dialect="GenericSQL" />

@@ -8,8 +8,10 @@ import com.enrollmentsystem.models.Strand;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.StrandRepository;
+import com.enrollmentsystem.utils.DatabaseConnection;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,15 +27,14 @@ public class StrandService extends BaseService {
         validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            var strands = _repo.getAllStrands();
-
-            if (strands == null) {
-                throw new IllegalArgumentException("Failed to load strands.");
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                return _repo.getAllStrands(conn).stream()
+                        .map(StrandMapper::toDTO)
+                        .toList();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to load strands.");
             }
-
-            return strands.stream()
-                    .map(StrandMapper::toDTO)
-                    .toList();
         });
     }
 
@@ -52,29 +53,36 @@ public class StrandService extends BaseService {
         var strand = StrandMapper.toNewModel(strandDTO);
 
         return CompletableFuture.supplyAsync(() -> {
-            Strand existingStrand = _repo.findStrandByCode(strand.getStrandCode());
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Strand existingStrand = _repo.findStrandByCode(conn, strand.getStrandCode());
 
-            if (existingStrand != null) {
-                if (!existingStrand.isArchived()) {
-                    throw new IllegalArgumentException("Strand code is already in use.");
-                } else {
-                    return _repo.restoreAndUpdateStrand(strand);
+                if (existingStrand != null) {
+                    if (!existingStrand.isArchived()) {
+                        throw new IllegalArgumentException("Strand code is already in use.");
+                    } else {
+                        return _repo.restoreAndUpdateStrand(conn, strand) != 0;
+                    }
                 }
+
+                if (_repo.existsByDescription(conn, strand.getStrandDescription(), -1)) {
+                    throw new IllegalArgumentException("Strand description is already in use.");
+                }
+
+                _repo.addStrand(conn, strand);
+
+                logActivity(
+                        conn,
+                        strand.getStrandCode(),
+                        AuditAction.ADD,
+                        AuditModule.STRAND_MANAGEMENT,
+                        "Added new strand: " + strand.getStrandCode()
+                );
+
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to add strand.");
             }
-
-            if (_repo.existsByDescription(strand.getStrandDescription(), -1)) {
-                throw new IllegalArgumentException("Strand description is already in use.");
-            }
-
-            Integer newStrandId = _repo.addStrand(strand);
-
-            if (newStrandId == null) {
-                return false;
-            }
-
-            logActivity(newStrandId.toString(), AuditAction.ADD, AuditModule.STRAND_MANAGEMENT, "Added new strand: " + newStrandId);
-
-            return true;
         });
     }
 
@@ -92,22 +100,33 @@ public class StrandService extends BaseService {
         var strand = StrandMapper.toModel(strandDTO);
 
         return CompletableFuture.supplyAsync(() -> {
-            Strand existingStrand = _repo.findStrandByCode(strand.getStrandCode());
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Strand existingStrand = _repo.findStrandByCode(conn, strand.getStrandCode());
 
-            if (existingStrand != null && existingStrand.getStrandId() != strand.getStrandId()) {
-                throw new IllegalArgumentException("Strand code is already in use.");
-            }
+                if (existingStrand != null && existingStrand.getStrandId() != strand.getStrandId()) {
+                    throw new IllegalArgumentException("Strand code is already in use.");
+                }
 
-            if (_repo.existsByDescription(strand.getStrandDescription(), strand.getStrandId())) {
-                throw new IllegalArgumentException("Strand description is already in use.");
-            }
+                if (_repo.existsByDescription(conn, strand.getStrandDescription(), strand.getStrandId())) {
+                    throw new IllegalArgumentException("Strand description is already in use.");
+                }
 
-            if (_repo.updateStrandById(strand)) {
-                logActivity(String.valueOf(strand.getStrandId()), AuditAction.UPDATE, AuditModule.STRAND_MANAGEMENT, "Updated strand: " + strand.getStrandId());
+                int rowsAffected = _repo.updateStrandById(conn, strand);
+                if (rowsAffected == 0) return false;
+
+                logActivity(
+                        conn,
+                        strand.getStrandCode(),
+                        AuditAction.UPDATE,
+                        AuditModule.STRAND_MANAGEMENT,
+                        "Updated strand: " + strand.getStrandCode()
+                );
+
                 return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to update strand.");
             }
-
-            return false;
         });
     }
 
@@ -122,6 +141,14 @@ public class StrandService extends BaseService {
                 new SecurityException("Unauthorized access.")
         );
 
-        return CompletableFuture.supplyAsync(() -> _repo.deleteStrandById(strandId));
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                int rowsAffected = _repo.deleteStrandById(conn, strandId);
+                return rowsAffected != 0;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to delete strand.");
+            }
+        });
     }
 }

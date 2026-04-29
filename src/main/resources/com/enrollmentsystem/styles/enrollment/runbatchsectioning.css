@@ -44,3 +44,22 @@
 .container .detail-container .label {
     -fx-font-size: 14;
 }
+
+.feedback-label {
+    -fx-background-color: #EBF5FF;
+    -fx-border-color: #6988AC;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.feedback-label.success {
+    -fx-background-color: #E2F9EC;
+    -fx-border-color: #1F7D49;
+    -fx-text-fill: #1F7D49;
+}
+
+.feedback-label.failed {
+    -fx-text-fill: #C53434;
+    -fx-background-color: #F9EAEA;
+    -fx-border-color: #C53434;
+}

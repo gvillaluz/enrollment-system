@@ -8,7 +8,6 @@ import com.enrollmentsystem.mappers.*;
 import com.enrollmentsystem.models.*;
 import com.enrollmentsystem.repositories.*;
 import com.enrollmentsystem.utils.DatabaseConnection;
-import com.enrollmentsystem.utils.ValidationHelper;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,14 +32,19 @@ public class EnrollmentService extends BaseService {
         validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId();
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId(conn);
 
-            if (schoolYearId == null) {
-                System.out.println("Failed to get active school year: ");
-                throw new IllegalArgumentException("Failed to get enrollment list.");
+                if (schoolYearId == null) {
+                    System.out.println("Failed to get active school year: ");
+                    throw new IllegalArgumentException("Failed to get enrollment list.");
+                }
+
+                return _enrollmentRepo.getRowsCount(conn, gradeLevel, schoolYearId, searchValue);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to get row count.");
             }
-
-            return _enrollmentRepo.getRowsCount(gradeLevel, schoolYearId, searchValue);
         });
     }
 
@@ -48,14 +52,19 @@ public class EnrollmentService extends BaseService {
         validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId();
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Integer schoolYearId = _enrollmentRepo.getActiveSchoolYearId(conn);
 
-            if (schoolYearId == null) {
-                System.out.println("Failed to get active school year: ");
-                throw new IllegalArgumentException("Failed to get enrollment list.");
+                if (schoolYearId == null) {
+                    System.out.println("Failed to get active school year: ");
+                    throw new IllegalArgumentException("Failed to get enrollment list.");
+                }
+
+                return _enrollmentRepo.getLatest20(conn, gradeLevel, schoolYearId, searchValue, offset);
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to get latest enrollment records.");
             }
-
-            return _enrollmentRepo.getLatest20(gradeLevel, schoolYearId, searchValue, offset);
         });
     }
 
@@ -63,19 +72,24 @@ public class EnrollmentService extends BaseService {
         validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            var student = _studentRepo.findStudentByLRN(lrn);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                var student = _studentRepo.findStudentByLRN(conn, lrn);
 
-            if (student == null) {
-                return null;
+                if (student == null) {
+                    return null;
+                }
+
+                EnrollmentFormDTO enrollmentFormDTO = _enrollmentRepo.getEnrollmentDataByLRN(conn, student.getLrn());
+
+                enrollmentFormDTO.setRequirementDTOS(
+                        RequirementMapper.toDTOListFromModels(_requirementRepo.getStudentRequirementsByLRN(conn, enrollmentFormDTO.getLrn()))
+                );
+
+                return enrollmentFormDTO;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to load enrollment record.");
             }
-
-            EnrollmentFormDTO enrollmentFormDTO = _enrollmentRepo.getEnrollmentDataByLRN(student.getLrn());
-
-            enrollmentFormDTO.setRequirementDTOS(
-                    RequirementMapper.toDTOListFromModels(_requirementRepo.getStudentRequirementsByLRN(enrollmentFormDTO.getLrn()))
-            );
-
-            return enrollmentFormDTO;
         });
     }
 
@@ -88,15 +102,20 @@ public class EnrollmentService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            EnrollmentFormDTO enrollmentFormDTO = _enrollmentRepo.getEnrollmentEditData(enrollmentId);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                EnrollmentFormDTO enrollmentFormDTO = _enrollmentRepo.getEnrollmentEditData(conn, enrollmentId);
 
-            System.out.println("Service: " + enrollmentFormDTO.getSemester());
+                System.out.println("Service: " + enrollmentFormDTO.getSemester());
 
-            enrollmentFormDTO.setRequirementDTOS(
-                    RequirementMapper.toDTOListFromModels(_requirementRepo.getStudentRequirementsByLRN(enrollmentFormDTO.getLrn()))
-            );
+                enrollmentFormDTO.setRequirementDTOS(
+                        RequirementMapper.toDTOListFromModels(_requirementRepo.getStudentRequirementsByLRN(conn, enrollmentFormDTO.getLrn()))
+                );
 
-            return enrollmentFormDTO;
+                return enrollmentFormDTO;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to load enrollment record.");
+            }
         });
 
     }
@@ -118,7 +137,7 @@ public class EnrollmentService extends BaseService {
                     AcademicInformation academicInformation = AcademicMapper.toNewModel(dto);
                     List<StudentRequirement> requirements = RequirementMapper.toNewModels(dto.getRequirementDTOS());
 
-                    Integer activeSchoolYrId = _enrollmentRepo.getActiveSchoolYearId();
+                    Integer activeSchoolYrId = _enrollmentRepo.getActiveSchoolYearId(conn);
 
                     if (activeSchoolYrId == null) {
                         throw new IllegalArgumentException("No active school year.");
@@ -132,7 +151,7 @@ public class EnrollmentService extends BaseService {
                         throw new IllegalArgumentException("Student has already been enrolled in this school year.");
                     }
 
-                    if (!_studentRepo.checkStudentExistsByLRN(dto.getLrn())) {
+                    if (!_studentRepo.checkStudentExistsByLRN(conn, dto.getLrn())) {
                         _studentRepo.addStudent(conn, student);
                         _academicRepo.addAcademicInformation(conn, academicInformation);
                         _requirementRepo.addStudentRequirements(conn, requirements);
@@ -174,7 +193,6 @@ public class EnrollmentService extends BaseService {
                     throw e;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
                 System.out.println("Failed to process enrollment: " + e.getMessage());
                 throw new IllegalArgumentException("Failed to process enrollment");
             }
@@ -210,7 +228,7 @@ public class EnrollmentService extends BaseService {
                             student.getLrn(),
                             AuditAction.UPDATE,
                             AuditModule.ENROLLMENT,
-                            "Updated enrollment: " + student.getLrn()
+                            "Updated enrollment: " + student.getFirstName() + " " + student.getLastName()
                     );
 
                     conn.commit();
@@ -221,7 +239,6 @@ public class EnrollmentService extends BaseService {
                     throw e;
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
                 System.out.println("Failed to edit enrollment: " + e.getMessage());
                 throw new IllegalArgumentException("Failed to edit enrollment");
             }
@@ -237,11 +254,23 @@ public class EnrollmentService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            if (_enrollmentRepo.archiveEnrollmentByLRN(enrollmentId)) {
-                logActivity(lrn, AuditAction.ARCHIVE, AuditModule.ENROLLMENT, "Archive enrollment record: " + lrn);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                int rowsAffected = _enrollmentRepo.archiveEnrollmentByLRN(conn, enrollmentId);
+
+                if (rowsAffected == 0) return false;
+
+                logActivity(
+                        conn,
+                        lrn,
+                        AuditAction.ARCHIVE,
+                        AuditModule.ENROLLMENT,
+                        "Archive enrollment record: " + lrn);
+
                 return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to archive enrollment record.");
             }
-            return false;
         });
     }
 

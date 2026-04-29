@@ -7,19 +7,27 @@ import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.utils.filters.ModalConfig;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
-import com.enrollmentsystem.viewmodels.admin.UserManagementViewModel;
-import com.enrollmentsystem.viewmodels.admin.UserViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserManagementViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
+import javafx.util.Duration;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -32,6 +40,8 @@ public class UserManagementController {
     @FXML private TableColumn<UserViewModel, UserStatus> statusCol;
     @FXML private TableColumn<UserViewModel, Void> actionCol;
 
+    @FXML private Button refreshBtn;
+
     @FXML private Pagination pagination;
 
     private final UserManagementViewModel viewModel = new UserManagementViewModel();
@@ -41,8 +51,16 @@ public class UserManagementController {
         setupTable();
         setupActionColumn();
         setupPagination();
+        setupRefreshButton();
+    }
 
-        userTable.setItems(viewModel.getUserList());
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        if (pagination.getCurrentPageIndex() == 0) {
+            viewModel.loadUsers(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
     }
 
     @FXML
@@ -68,7 +86,7 @@ public class UserManagementController {
 
             ViewNavigator.showModal(modalContent, owner);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -126,6 +144,7 @@ public class UserManagementController {
 
         userTable.setFocusModel(null);
         userTable.setFocusTraversable(false);
+        userTable.setItems(viewModel.getUserList());
     }
 
     private void setupActionColumn() {
@@ -295,5 +314,44 @@ public class UserManagementController {
         );
 
         currentStage.getScene().setCursor(Cursor.DEFAULT);
+    }
+
+    private void setupLoadingState() {
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setMaxSize(50, 50);
+        progressIndicator.getStyleClass().add("progress-indicator");
+
+        Label emptyLabel = new Label("No records found.");
+        emptyLabel.getStyleClass().add("place-holder");
+
+        userTable.placeholderProperty().bind(
+                Bindings.when(viewModel.loadingProperty())
+                        .then((Node) progressIndicator)
+                        .otherwise((Node) emptyLabel)
+        );
+
+        pagination.disableProperty().bind(viewModel.loadingProperty());
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

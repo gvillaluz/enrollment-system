@@ -6,11 +6,15 @@ import com.enrollmentsystem.enums.AuditAction;
 import com.enrollmentsystem.enums.AuditModule;
 import com.enrollmentsystem.enums.UserStatus;
 import com.enrollmentsystem.mappers.UserMapper;
+import com.enrollmentsystem.models.User;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.UserRepository;
+import com.enrollmentsystem.utils.DatabaseConnection;
 import com.enrollmentsystem.utils.PasswordHasher;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -18,8 +22,8 @@ public class UserService extends BaseService {
     private final UserRepository _userRepo;
 
     public UserService(UserRepository userRepo, AuditRepository auditRepo) {
-        _userRepo = userRepo;
         super(auditRepo);
+        _userRepo = userRepo;
     }
 
     public CompletableFuture<Integer> getTotalCount() {
@@ -29,13 +33,18 @@ public class UserService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-           var totalRows = _userRepo.countUsers();
+           try (Connection conn = DatabaseConnection.getConnection()) {
+               var totalRows = _userRepo.countUsers(conn);
 
-           if (totalRows == null) {
-               throw new IllegalArgumentException("Failed to get total rows");
+               if (totalRows == null) {
+                   throw new IllegalArgumentException("Failed to get total rows");
+               }
+
+               return totalRows;
+           } catch (SQLException e) {
+               System.out.println(e.getMessage());
+               throw new RuntimeException("Failed to get row count.");
            }
-
-           return totalRows;
         });
     }
 
@@ -46,15 +55,14 @@ public class UserService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            var dtos = _userRepo.getAllUsers(offset);
-
-            if (dtos == null || dtos.isEmpty()) {
-                return null;
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                return _userRepo.getAllUsers(conn, offset).stream()
+                        .map(UserMapper::toDTO)
+                        .toList();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to load users.");
             }
-
-            return dtos.stream()
-                    .map(UserMapper::toDTO)
-                    .toList();
         });
     }
 
@@ -65,22 +73,24 @@ public class UserService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            userDTO.setPassword(PasswordHasher.hash(userDTO.getPassword()));
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                userDTO.setPassword(PasswordHasher.hash(userDTO.getPassword()));
 
-            Integer genUserId = _userRepo.addUser(UserMapper.toNewModel(userDTO));
+                _userRepo.addUser(conn, UserMapper.toNewModel(userDTO));
 
-            if (genUserId == null)  {
-                throw new IllegalArgumentException("Failed to add user");
+                logActivity(
+                        conn,
+                        userDTO.getUsername(),
+                        AuditAction.ADD,
+                        AuditModule.USER_MANAGEMENT,
+                        "Added user: " + userDTO.getFirstName() + " " + userDTO.getLastName()
+                );
+
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to add user.");
             }
-
-            logActivity(
-                    genUserId.toString(),
-                    AuditAction.ADD,
-                    AuditModule.USER_MANAGEMENT,
-                    "Added user: " + genUserId
-            );
-
-            return true;
         });
     }
 
@@ -91,17 +101,32 @@ public class UserService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            boolean isSaved = _userRepo.updateUser(UserMapper.toModel(userDTO));
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                User existingUser = _userRepo.findUserById(conn, userDTO.getUserId());
+                if (existingUser == null) return false;
 
-            if (isSaved)
+                existingUser.setFirstName(userDTO.getFirstName());
+                existingUser.setLastName(userDTO.getLastName());
+                existingUser.setMiddleName(userDTO.getMiddleName());
+                existingUser.setRole(userDTO.getRole());
+                existingUser.setUsername(userDTO.getUsername());
+
+                int rowsAffected = _userRepo.updateUser(conn, existingUser);
+                if (rowsAffected == 0) return false;
+
                 logActivity(
-                        String.valueOf(userDTO.getUserId()),
+                        conn,
+                        userDTO.getUsername(),
                         AuditAction.UPDATE,
                         AuditModule.USER_MANAGEMENT,
-                        "Updated user: " + userDTO.getUserId()
+                        "Updated user: " + userDTO.getFirstName() + " " + userDTO.getLastName()
                 );
 
-            return isSaved;
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to update user.");
+            }
         });
     }
 
@@ -114,18 +139,26 @@ public class UserService extends BaseService {
         UserStatus newStatus = status == UserStatus.ACTIVE ? UserStatus.INACTIVE : UserStatus.ACTIVE;
 
         return CompletableFuture.supplyAsync(() -> {
-            if (!_userRepo.updateUserStatusById(userId, newStatus)) {
-                throw new IllegalArgumentException("Failed to update user status");
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                User existingUser = _userRepo.findUserById(conn, userId);
+                if (existingUser == null) return null;
+
+                int rowsAffected = _userRepo.updateUserStatusById(conn, userId, newStatus);
+                if (rowsAffected == 0) return null;
+
+                logActivity(
+                        conn,
+                        existingUser.getUsername(),
+                        AuditAction.UPDATE,
+                        AuditModule.USER_MANAGEMENT,
+                        "Deactivated user: " + existingUser.getFirstName() + " " + existingUser.getLastName()
+                );
+
+                return newStatus;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to update user status.");
             }
-
-            logActivity(
-                    String.valueOf(userId),
-                    AuditAction.UPDATE,
-                    AuditModule.USER_MANAGEMENT,
-                    "Deactivated user: " + userId
-            );
-
-            return newStatus;
         });
     }
 
@@ -136,20 +169,27 @@ public class UserService extends BaseService {
             );
 
         return CompletableFuture.supplyAsync(() -> {
-            String hashedPassword = PasswordHasher.hash(AppConfig.DEFAULT_PASSWORD);
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                User existingUser = _userRepo.findUserById(conn, userId);
 
-           if (!_userRepo.resetUserPassword(userId, hashedPassword)) {
-               return false;
-           }
+                String hashedPassword = PasswordHasher.hash(AppConfig.DEFAULT_PASSWORD);
 
-           logActivity(
-                   String.valueOf(userId),
-                   AuditAction.UPDATE,
-                   AuditModule.USER_MANAGEMENT,
-                   "Reset Password: " + userId
-           );
+                int rowsAffected = _userRepo.resetUserPassword(conn, userId, hashedPassword);
+                if (rowsAffected == 0) return false;
 
-           return true;
+                logActivity(
+                        conn,
+                        existingUser.getUsername(),
+                        AuditAction.UPDATE,
+                        AuditModule.USER_MANAGEMENT,
+                        "Reset Password for user: " + existingUser.getFirstName() + " " + existingUser.getLastName()
+                );
+
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to reset user password.");
+            }
         });
     }
 }

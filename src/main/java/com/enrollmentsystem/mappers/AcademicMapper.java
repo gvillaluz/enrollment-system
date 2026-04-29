@@ -2,7 +2,7 @@ package com.enrollmentsystem.mappers;
 
 import com.enrollmentsystem.dtos.EnrollmentFormDTO;
 import com.enrollmentsystem.models.AcademicInformation;
-import com.enrollmentsystem.viewmodels.enrollment.AcademicInformationViewModel;
+import com.enrollmentsystem.viewmodels.enrollment.addstudent.AcademicInformationViewModel;
 
 public class AcademicMapper {
     public static AcademicInformation toNewModel(EnrollmentFormDTO dto) {

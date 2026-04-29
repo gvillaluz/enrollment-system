@@ -150,3 +150,74 @@
 .notification-bar > .label > .image-view {
     -fx-margin: 0 10 0 0;
 }
+
+.table-view {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-border-color: #B9B9B9;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #E5E5E5;
+}
+
+.table-row-cell:hover .table-cell {
+    -fx-border-color: transparent;
+}
+
+.table-row-cell:hover .separator .line {
+    -fx-border-color: transparent;
+}
+
+.table-view .placeholder {
+    -fx-opacity: 1.0;
+}
+
+.table-view .placeholder .progress-indicator {
+    -fx-progress-color: #EF7707;
+    -fx-opacity: 1.0;
+}
+
+.table-view .placeholder .label {
+    -fx-text-fill: #333333;
+    -fx-opacity: 1.0;
+}
+
+.table-view .scroll-bar:vertical {
+    -fx-pref-width: 10;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.pagination .number-button {
+    -fx-border-radius: 2;
+    -fx-background-radius: 2;
+}
+
+.pagination .number-button:selected {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 2;
+}
+
+.refresh-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #EF7707;
+    -fx-text-fill: #EF7707;
+    -fx-font-size: 14;
+    -fx-border-radius: 3;
+}
+
+.refresh-icon {
+    -fx-icon-color: #EF7707;
+}
+
+.refresh-btn:hover {
+    -fx-background-color: #EF7707;
+    -fx-text-fill: #FAFAFA;
+}
+
+.refresh-btn:hover .refresh-icon {
+    -fx-icon-color: #FAFAFA;
+}

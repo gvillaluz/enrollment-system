@@ -3,16 +3,22 @@ package com.enrollmentsystem.controllers.dashboard.admin;
 import com.enrollmentsystem.dtos.SchoolYearDTO;
 import com.enrollmentsystem.enums.EnrollmentStatus;
 import com.enrollmentsystem.enums.Semester;
-import com.enrollmentsystem.viewmodels.academic.SectionViewModel;
-import com.enrollmentsystem.viewmodels.admin.ArchiveRecordsViewModel;
-import com.enrollmentsystem.viewmodels.admin.ArchiveViewModel;
-import com.enrollmentsystem.viewmodels.enrollment.EnrollmentSummaryViewModel;
+import com.enrollmentsystem.utils.NotificationHelper;
+import com.enrollmentsystem.utils.ViewNavigator;
+import com.enrollmentsystem.utils.filters.ModalConfig;
+import com.enrollmentsystem.viewmodels.admin.archive.ArchiveRecordsViewModel;
+import com.enrollmentsystem.viewmodels.admin.archive.ArchiveViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
 import javafx.animation.PauseTransition;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -21,10 +27,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.CustomTextField;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.util.Objects;
 
@@ -42,6 +51,8 @@ public class ArchiveController {
     @FXML private ComboBox<Integer> gradeLevelSelect;
     @FXML private Pagination pagination;
 
+    @FXML private Button refreshBtn;
+
     private final ArchiveRecordsViewModel viewModel = new ArchiveRecordsViewModel();
     private final PauseTransition searchDebounce = new PauseTransition(Duration.millis(300));
 
@@ -53,9 +64,16 @@ public class ArchiveController {
         setupDropdownSelect();
         setupPagination();
         setupLoadingState();
+        setupRefreshButton();
+    }
 
-        viewModel.loadSchoolYears();
-        archiveTable.setItems(viewModel.getArchiveRecords());
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        if (pagination.getCurrentPageIndex() == 0) {
+            viewModel.loadArchives(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
     }
 
     private void setupSearchBar() {
@@ -136,6 +154,7 @@ public class ArchiveController {
         archiveTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         archiveTable.setFocusTraversable(false);
         archiveTable.setFocusModel(null);
+        archiveTable.setItems(viewModel.getArchiveRecords());
     }
 
     private void setupActionColumn() {
@@ -144,13 +163,8 @@ public class ArchiveController {
                     @Override
                     public TableCell<ArchiveViewModel, Void> call(final TableColumn<ArchiveViewModel, Void> param) {
                         return new TableCell<>() {
-
-                            // 1. Create Labels
                             private final Label editLbl = new Label("RESTORE");
                             private final Label deleteLbl = new Label("DELETE");
-
-                            // 2. Create Containers (HBoxes) for the labels
-                            //    This allows the whole "box" to be clickable, not just the text.
                             private final HBox editBox = new HBox(editLbl);
                             private final HBox deleteBox = new HBox(deleteLbl);
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
@@ -231,6 +245,11 @@ public class ArchiveController {
         schoolYearSelect.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 viewModel.schoolYearIdProperty().set(newVal.getSchoolYearId());
+                if (pagination.getCurrentPageIndex() == 0) {
+                    viewModel.loadArchives(0);
+                } else {
+                    pagination.setCurrentPageIndex(0);
+                }
             }
         });
 
@@ -272,9 +291,99 @@ public class ArchiveController {
         });
     }
 
-    private void handleRestore(ArchiveViewModel record) {}
+    private void handleRestore(ArchiveViewModel record) {
+        Window currentStage = archiveTable.getScene().getWindow();
+        currentStage.getScene().setCursor(Cursor.WAIT);
 
-    private void handleDelete(ArchiveViewModel record) {}
+        Runnable onConfirmAction = () -> {
+            viewModel.restoreRecord(record.enrollmentIdProperty().get(), record.lrnProperty().get())
+                    .thenAccept(success -> {
+                        Platform.runLater(() -> {
+                            if (success) {
+                                viewModel.loadArchives(pagination.getCurrentPageIndex());
+
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Enrollment record successfully restored",
+                                        "success"
+                                );
+                            } else {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Failed to restore record.",
+                                        "error"
+                                );
+                            }
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+                        Platform.runLater(() -> {
+                            NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                        });
+                        return null;
+                    });
+        };
+
+        ViewNavigator.showConfirmModal(
+                (Stage) currentStage,
+                new ModalConfig(
+                        "Restore Record",
+                        "are you sure you want to restore this record?",
+                        onConfirmAction
+                )
+        );
+
+        currentStage.getScene().setCursor(Cursor.DEFAULT);
+    }
+
+    private void handleDelete(ArchiveViewModel record) {
+        Window currentStage = archiveTable.getScene().getWindow();
+        currentStage.getScene().setCursor(Cursor.WAIT);
+
+        Runnable onConfirmAction = () -> {
+            viewModel.permanentDeleteRecord(record.enrollmentIdProperty().get(), record.lrnProperty().get())
+                    .thenAccept(success -> {
+                        Platform.runLater(() -> {
+                            if (success) {
+                                viewModel.loadArchives(pagination.getCurrentPageIndex());
+
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Enrollment record successfully deleted",
+                                        "success"
+                                );
+                            } else {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Failed to delete record.",
+                                        "error"
+                                );
+                            }
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+                        Platform.runLater(() -> {
+                            NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                        });
+                        return null;
+                    });
+        };
+
+        ViewNavigator.showConfirmModal(
+                (Stage) currentStage,
+                new ModalConfig(
+                        "Permanent Delete Record",
+                        "are you sure you want to delete this record permanently?",
+                        onConfirmAction
+                )
+        );
+
+        currentStage.getScene().setCursor(Cursor.DEFAULT);
+    }
 
     private void setupPagination() {
         pagination.pageCountProperty().bind(viewModel.totalPagesProperty());
@@ -291,13 +400,36 @@ public class ArchiveController {
         progressIndicator.getStyleClass().add("progress-indicator");
 
         Label emptyLabel = new Label("No records found.");
+        emptyLabel.getStyleClass().add("place-holder");
 
         archiveTable.placeholderProperty().bind(
-                Bindings.when(viewModel.isLoadingProperty())
+                Bindings.when(viewModel.loadingProperty())
                         .then((Node) progressIndicator)
                         .otherwise((Node) emptyLabel)
         );
 
-        pagination.disableProperty().bind(viewModel.isLoadingProperty());
+        pagination.disableProperty().bind(viewModel.loadingProperty());
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

@@ -2,8 +2,8 @@ package com.enrollmentsystem.controllers.dashboard.admin;
 
 import com.enrollmentsystem.enums.Role;
 import com.enrollmentsystem.utils.NotificationHelper;
-import com.enrollmentsystem.viewmodels.admin.UserFormViewModel;
-import com.enrollmentsystem.viewmodels.admin.UserViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserFormViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserViewModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -75,7 +75,6 @@ public class UserFormController {
                     Platform.runLater(() -> {
                         Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                         NotificationHelper.showToast(mainDashboard, cause.getMessage(), "error");
-                        ex.printStackTrace();
                     });
                     return null;
                 });

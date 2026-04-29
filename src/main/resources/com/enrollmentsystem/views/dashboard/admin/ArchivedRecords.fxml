@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
@@ -15,11 +16,16 @@
    <children>
       <VBox prefHeight="595.0" prefWidth="1060.0" styleClass="main-vbox" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
          <children>
-            <Label styleClass="title-label" text="Archived Records">
+            <HBox alignment="CENTER">
                <VBox.margin>
                   <Insets bottom="10.0" />
                </VBox.margin>
-            </Label>
+               <children>
+                  <Label styleClass="title-label" text="Archived Records" />
+                  <Region prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onRefresh" prefHeight="40.0" prefWidth="106.0" styleClass="refresh-btn" text="Refresh" />
+               </children>
+            </HBox>
             <VBox prefHeight="200.0" prefWidth="100.0" styleClass="sub-vbox" VBox.vgrow="ALWAYS">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />

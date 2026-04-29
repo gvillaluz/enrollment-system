@@ -64,3 +64,11 @@
     -fx-border-color: #27ae60 !important;
     -fx-border-width: 2px !important;
 }
+
+.button:disabled {
+    -fx-opacity: 1.0;
+}
+
+.button:disabled .progress-indicator {
+    -fx-opacity: 1.0;
+}

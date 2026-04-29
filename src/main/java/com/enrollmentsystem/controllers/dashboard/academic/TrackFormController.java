@@ -1,9 +1,9 @@
 package com.enrollmentsystem.controllers.dashboard.academic;
 
 import com.enrollmentsystem.utils.NotificationHelper;
-import com.enrollmentsystem.viewmodels.academic.TrackFormViewModel;
-import com.enrollmentsystem.viewmodels.academic.TrackManagementViewModel;
-import com.enrollmentsystem.viewmodels.academic.TrackViewModel;
+import com.enrollmentsystem.viewmodels.academic.track.TrackFormViewModel;
+import com.enrollmentsystem.viewmodels.academic.track.TrackManagementViewModel;
+import com.enrollmentsystem.viewmodels.academic.track.TrackViewModel;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -56,7 +56,7 @@ public class TrackFormController {
                    Platform.runLater(() -> {
                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                        NotificationHelper.showToast(mainDashboard, cause.getMessage(), "error");
-                       ex.printStackTrace();
+                       System.out.println(ex.getMessage());
                    });
                     return null;
                 });

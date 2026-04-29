@@ -10,13 +10,20 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane styleClass="anchor-pane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.admin.UserManagementController">
     <children>
         <VBox prefHeight="529.0" prefWidth="736.0" spacing="10.0" styleClass="main-vbox" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <Label styleClass="title-label" text="Users Management" />
+            <HBox alignment="CENTER">
+               <children>
+                      <Label styleClass="title-label" text="Users Management" />
+                  <Region prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onRefresh" prefHeight="40.0" prefWidth="106.0" styleClass="refresh-btn" text="Refresh" />
+               </children>
+            </HBox>
                 <HBox alignment="CENTER_RIGHT" maxHeight="258.0" prefHeight="28.0" prefWidth="736.0" styleClass="add-row">
                <children>
                   <Button fx:id="addBtn" graphicTextGap="10.0" maxHeight="29.0" maxWidth="165.0" minHeight="29.0" minWidth="165.0" mnemonicParsing="false" onAction="#openAddModal" prefHeight="29.0" prefWidth="165.0" styleClass="add-user-btn" text="Add New User">
@@ -37,11 +44,11 @@
                             <columns>
                                 <TableColumn fx:id="idCol" editable="false" maxWidth="120.0" minWidth="-Infinity" prefWidth="120.0" sortable="false" text="User ID" />
                                 <TableColumn fx:id="lastNameCol" editable="false" maxWidth="165.0" prefWidth="165.0" sortable="false" text="Last Name" />
-                        <TableColumn fx:id="firstNameCol" maxWidth="151.0" prefWidth="151.0" text="First Name" />
-                        <TableColumn fx:id="middleNameCol" maxWidth="171.0" prefWidth="171.0" text="Middle Name" />
-                        <TableColumn fx:id="usernameCol" maxWidth="228.0" prefWidth="228.0" text="Username" />
+                                <TableColumn fx:id="firstNameCol" maxWidth="151.0" prefWidth="151.0" sortable="false" text="First Name" />
+                                <TableColumn fx:id="middleNameCol" maxWidth="171.0" prefWidth="171.0" sortable="false" text="Middle Name" />
+                                <TableColumn fx:id="usernameCol" maxWidth="228.0" prefWidth="228.0" sortable="false" text="Username" />
                                 <TableColumn fx:id="roleCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="120.0" prefWidth="120.0" sortable="false" text="Role" />
-                        <TableColumn fx:id="statusCol" maxWidth="189.0" prefWidth="189.0" text="Status" />
+                                <TableColumn fx:id="statusCol" maxWidth="189.0" prefWidth="189.0" sortable="false" text="Status" />
                                 <TableColumn fx:id="actionCol" editable="false" maxWidth="1.7976931348623157E308" prefWidth="250.0" sortable="false" text="Action" />
                             </columns>
                             <columnResizePolicy>

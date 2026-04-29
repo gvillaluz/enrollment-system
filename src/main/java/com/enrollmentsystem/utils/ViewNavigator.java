@@ -33,7 +33,7 @@ public class ViewNavigator {
 
             currentScene.setRoot(loginRoot);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -52,7 +52,6 @@ public class ViewNavigator {
             root.setCenter(contentRoot);
         } catch (IOException e) {
             System.out.println("Error: "+ e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -115,30 +114,7 @@ public class ViewNavigator {
             modal.showAndWait();
 
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("Failed to load delete modal: " + e.getMessage());
         }
     }
-
-//    public static void showArchiveModal(Stage owner, ModalConfig config) {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(App.class.getResource("/com/enrollmentsystem/views/dashboard/shared/ConfirmArchive.fxml"));
-//            Parent content = loader.load();
-//            content.getStylesheets().add(
-//                    Objects.requireNonNull(App.class.getResource("/com/enrollmentsystem/styles/shared/confirm-modal.css")).toExternalForm()
-//            );
-//
-//            ConfirmationModalController controller = loader.getController();
-//            controller.setup(config);
-//
-//            showConfirmationModal(content, owner);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            System.out.println("Failed to load archive modal: " + e.getMessage());
-//        }
-//    }
-//
-//    private static void showConfirmationModal(Parent content, Stage owner) {
-//
-//    }
 }

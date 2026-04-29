@@ -1,19 +1,17 @@
 package com.enrollmentsystem.repositories;
 
 import com.enrollmentsystem.models.Track;
-import com.enrollmentsystem.utils.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TrackRepository {
-    public List<Track> getAllTracks() {
+    public List<Track> getAllTracks(Connection conn) throws SQLException {
         List<Track> tracks = new ArrayList<>();
         String query = "SELECT * FROM shs_track WHERE is_archived = 0";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query);
+        try (PreparedStatement statement = conn.prepareStatement(query);
                 ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 var track = new Track();
@@ -23,63 +21,43 @@ public class TrackRepository {
                 track.setArchived(rs.getBoolean("is_archived"));
                 tracks.add(track);
             }
-        } catch (SQLException e) {
-            System.out.println("Failed to load tracks: " + e.getMessage());
         }
-
         return tracks;
     }
 
-    public Integer addTrack(Track track) {
+    public void addTrack(Connection conn, Track track) throws SQLException {
         String query = "INSERT INTO shs_track (track_code, track_description, is_archived) VALUES (?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, track.getTrackCode());
             statement.setString(2, track.getTrackDescription());
             statement.setBoolean(3, track.isArchived());
 
             statement.executeUpdate();
-
-            try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                }
-            }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Error in saving track: " + e.getMessage());
-            return null;
         }
     }
 
-    public boolean existsByDescription(String description, int trackId) {
+    public boolean existsByDescription(Connection conn, String description, int trackId) throws SQLException {
         String query = "SELECT COUNT(*) FROM shs_track " +
                         "WHERE track_description = ? " +
                         "AND is_archived = 0 " +
                         "AND shs_track_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, description);
             statement.setInt(2, trackId);
 
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next() && rs.getInt(1) > 0;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            return false;
         }
     }
 
-    public Track findTrackByCode(String trackCode) {
+    public Track findTrackByCode(Connection conn, String trackCode) throws SQLException {
         String query = "SELECT * FROM shs_track " +
                         "WHERE track_code = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, trackCode);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -95,64 +73,45 @@ public class TrackRepository {
                     return null;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error in finding track by code: " + e.getMessage());
-            return null;
         }
     }
 
-    public boolean restoreAndUpdateTrack(Track track) {
+    public int restoreAndUpdateTrack(Connection conn, Track track) throws SQLException {
         String query = "UPDATE shs_track " +
                         "SET track_description = ?, is_archived = 0 " +
                         "WHERE track_code = ? AND is_archived = 1";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, track.getTrackDescription());
             statement.setString(2, track.getTrackCode());
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to restore and update track: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 
-    public boolean updateTrackById(Track track) {
+    public int updateTrackById(Connection conn, Track track) throws SQLException {
         String query = "UPDATE shs_track " +
                 "SET track_code = ?, track_description = ? " +
                 "WHERE shs_track_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, track.getTrackCode());
             statement.setString(2, track.getTrackDescription());
             statement.setInt(3, track.getTrackId());
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to update track: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 
-    public boolean deleteTrackById(int trackId) {
+    public int deleteTrackById(Connection conn, int trackId) throws SQLException {
         String query = "UPDATE shs_track " +
                         "SET is_archived = 1 " +
                         "WHERE shs_track_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-            PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, trackId);
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error in deleting track: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 }

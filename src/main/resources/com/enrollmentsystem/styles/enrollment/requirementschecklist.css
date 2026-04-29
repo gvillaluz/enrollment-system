@@ -28,32 +28,13 @@
     -fx-border-color: #ABABAB;
 }
 
-.pagination .number-button {
-    -fx-border-radius: 2;
-    -fx-background-radius: 2;
+.badge {
+    -fx-translate-x: 10;
+    -fx-translate-y: -4;
 }
 
-.pagination .number-button:selected {
-    -fx-background-color: #EF7707;
-    -fx-text-fill: white;
+.badge-count {
+    -fx-font-size: 9;
+    -fx-text-fill: #FAFAFA;
     -fx-font-weight: bold;
-    -fx-background-radius: 2;
-}
-
-.table-view {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-color: #B9B9B9;
-}
-
-.table-view .table-row-cell:hover {
-    -fx-background-color: #E5E5E5;
-}
-
-.table-row-cell:hover .table-cell {
-    -fx-border-color: transparent;
-}
-
-.table-row-cell:hover .separator .line {
-    -fx-border-color: transparent; /* Match your orange theme on hover */
 }

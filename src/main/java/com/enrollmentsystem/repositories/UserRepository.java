@@ -3,32 +3,26 @@ package com.enrollmentsystem.repositories;
 import com.enrollmentsystem.enums.Role;
 import com.enrollmentsystem.enums.UserStatus;
 import com.enrollmentsystem.models.User;
-import com.enrollmentsystem.utils.DatabaseConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository {
-    public Integer countUsers() {
+    public Integer countUsers(Connection conn) throws SQLException {
         String query = "SELECT COUNT(user_id) FROM users";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query);
+        try (PreparedStatement statement = conn.prepareStatement(query);
              ResultSet rs = statement.executeQuery()) {
             return rs.next() ? rs.getInt(1) : null;
-        } catch (SQLException e) {
-            System.out.println("Failed to get total rows: " + e.getMessage());
-            return null;
         }
     }
 
-    public List<User> getAllUsers(int offset) {
+    public List<User> getAllUsers(Connection conn, int offset) throws SQLException {
         List<User> users = new ArrayList<>();
         String query = "SELECT * FROM users LIMIT 15 OFFSET ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setInt(1, offset);
 
@@ -46,18 +40,15 @@ public class UserRepository {
                     users.add(user);
                 }
             }
-        } catch (SQLException e) {
-            System.out.println("Failed to load users: " + e.getMessage());
         }
 
         return users;
     }
 
-    public User findByUsername(String username) {
+    public User findByUsername(Connection conn, String username) throws SQLException {
         String query = "SELECT * FROM users WHERE username = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, username);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -76,18 +67,14 @@ public class UserRepository {
             }
 
             return null;
-        } catch (SQLException e) {
-            System.out.println("Failed to find user: " + e.getMessage());
-            return null;
         }
     }
 
-    public Integer addUser(User user) {
+    public void addUser(Connection conn, User user) throws SQLException {
         String query = "INSERT INTO users (last_name, first_name, middle_name, username, password, role, status) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, user.getLastName());
             statement.setString(2, user.getFirstName());
             statement.setString(3, user.getMiddleName());
@@ -97,25 +84,40 @@ public class UserRepository {
             statement.setString(7, user.getStatus().getStatus());
 
             statement.executeUpdate();
+        }
+    }
 
-            try (ResultSet generatedId = statement.getGeneratedKeys()) {
-                if (generatedId.next())
-                    return generatedId.getInt(1);
+    public User findUserById(Connection conn, int userId) throws SQLException {
+        String query = "SELECT * FROM users WHERE user_id = ?";
+
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, userId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    return new User(
+                            rs.getInt("user_id"),
+                            rs.getString("last_name"),
+                            rs.getString("first_name"),
+                            rs.getString("middle_name"),
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            Role.fromString(rs.getString("role")),
+                            UserStatus.fromString(rs.getString("status"))
+                    );
+                }
             }
-            return null;
-        } catch (SQLException e) {
-            System.out.println("Failed to add user: " + e.getMessage());
+
             return null;
         }
     }
 
-    public boolean updateUser(User user) {
+    public int updateUser(Connection conn, User user) throws SQLException {
         String query = "UPDATE users " +
                         "SET last_name = ?, first_name = ?, middle_name = ?, username = ?, role = ? " +
                         "WHERE user_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, user.getLastName());
             statement.setString(2, user.getFirstName());
             statement.setString(3, user.getMiddleName());
@@ -123,61 +125,46 @@ public class UserRepository {
             statement.setString(5, user.getRole().getValue());
             statement.setInt(6, user.getId());
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Failed to update user: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 
-    public boolean updateUserStatusById(int userId, UserStatus status) {
+    public int updateUserStatusById(Connection conn, int userId, UserStatus status) throws SQLException {
         String query = "UPDATE users " +
                         "SET status = ? " +
                         "WHERE user_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, status.getStatus());
             statement.setInt(2, userId);
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Failed to update user status: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 
-    public boolean resetUserPassword(int userId, String password) {
+    public int resetUserPassword(Connection conn, int userId, String password) throws SQLException {
         String query = "UPDATE users " +
                         "SET password = ? " +
                         "WHERE user_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, password);
             statement.setInt(2, userId);
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Failed to reset user password: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 
-    public boolean updateUserPassword(String hashedPassword, int userId) {
+    public int updateUserPassword(Connection conn, String hashedPassword, int userId) throws SQLException {
         String query = "UPDATE users " +
                         "SET password = ? " +
                         "WHERE user_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, hashedPassword);
             statement.setInt(2, userId);
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.out.println("Failed to update default password: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
     }
 }

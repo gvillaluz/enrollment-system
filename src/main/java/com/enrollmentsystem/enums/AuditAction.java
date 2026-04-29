@@ -5,8 +5,10 @@ public enum AuditAction {
     ARCHIVE("Archive"),
     RESTORE("Restore"),
     UPDATE("Update"),
+    DELETE("Delete"),
     LOGIN("Login"),
-    LOGOUT("Logout");
+    LOGOUT("Logout"),
+    RUN_BATCH_SECTIONING("Run Batch Sectioning");
 
     private String value;
 

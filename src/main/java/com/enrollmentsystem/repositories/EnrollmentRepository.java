@@ -1,5 +1,6 @@
 package com.enrollmentsystem.repositories;
 
+import com.enrollmentsystem.dtos.ClasslistRecordDTO;
 import com.enrollmentsystem.dtos.EnrollmentDTO;
 import com.enrollmentsystem.dtos.EnrollmentFormDTO;
 import com.enrollmentsystem.enums.EnrollmentStatus;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentRepository {
-    public Integer getRowsCount(int gradeLevel, int schoolYearId, String searchValue) {
+    public Integer getRowsCount(Connection conn, int gradeLevel, int schoolYearId, String searchValue) throws SQLException {
         String query = "SELECT COUNT(e.enrollment_id) FROM enrollments e " +
                         "LEFT JOIN student s ON e.student_lrn = s.student_lrn " +
                         "WHERE e.grade_level = ? AND e.school_year_id = ? ";
@@ -23,8 +24,7 @@ public class EnrollmentRepository {
             searchValue = "%" + searchValue + "%";
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setInt(1, gradeLevel);
             statement.setInt(2, schoolYearId);
@@ -38,14 +38,10 @@ public class EnrollmentRepository {
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next() ? rs.getInt(1) : null;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to get row count: " + e.getMessage());
-            return null;
         }
     }
 
-    public List<EnrollmentDTO> getLatest20(int gradeLevel, int schoolYearId, String searchValue, int offset) {
+    public List<EnrollmentDTO> getLatest20(Connection conn, int gradeLevel, int schoolYearId, String searchValue, int offset) throws SQLException {
         List<EnrollmentDTO> enrollmentList = new ArrayList<>();
         String query = "SELECT " +
                         "e.enrollment_id, e.student_lrn, e.section_id, e.school_year_id, e.sem_term, e.shs_track_id, e.shs_strand_id, e.grade_level, e.enrollment_status, e.date_enrolled, e.user_id, " +
@@ -62,11 +58,9 @@ public class EnrollmentRepository {
                         "LEFT JOIN sections sec ON e.section_id = sec.section_id " +
                         "WHERE e.enrollment_status = 'Enrolled' AND e.grade_level = ? AND e.school_year_id = ? " +
                         (searchValue != null ? "AND (s.student_lrn LIKE ? OR LOWER(s.last_name) LIKE (?) OR LOWER(s.first_name) LIKE LOWER(?)) " : "") +
-                        "ORDER BY e.date_enrolled DESC LIMIT 15 OFFSET ?";
+                        "ORDER BY e.date_enrolled DESC LIMIT 17 OFFSET ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query)) {
-
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
                 int paramIndex = 1;
                 statement.setInt(paramIndex++, gradeLevel);
                 statement.setInt(paramIndex++, schoolYearId);
@@ -104,14 +98,11 @@ public class EnrollmentRepository {
                     enrollmentList.add(enrollment);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load enrollments: " + e.getMessage());
         }
         return enrollmentList;
     }
 
-    public EnrollmentFormDTO getEnrollmentDataByLRN(String lrn) {
+    public EnrollmentFormDTO getEnrollmentDataByLRN(Connection conn, String lrn) throws SQLException {
         String query = "SELECT " +
                 "s.*, " +
                 "a.*, " +
@@ -127,8 +118,7 @@ public class EnrollmentRepository {
                 "LEFT JOIN sections sec ON e.section_id = sec.section_id " +
                 "WHERE e.student_lrn = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setString(1, lrn);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -162,14 +152,10 @@ public class EnrollmentRepository {
                     return null;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load enrollment data: " + e.getMessage());
-            return null;
         }
     }
 
-    public EnrollmentFormDTO getEnrollmentEditData(int enrollmentId) {
+    public EnrollmentFormDTO getEnrollmentEditData(Connection conn, int enrollmentId) throws SQLException {
         String query = "SELECT " +
                         "s.*, " +
                         "a.*, " +
@@ -185,8 +171,7 @@ public class EnrollmentRepository {
                         "LEFT JOIN sections sec ON e.section_id = sec.section_id " +
                         "WHERE e.enrollment_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, enrollmentId);
 
             try (ResultSet rs = statement.executeQuery()) {
@@ -220,10 +205,6 @@ public class EnrollmentRepository {
                     throw new SQLException("No enrollment records found.");
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load enrollment data: " + e.getMessage());
-            throw new IllegalArgumentException("Failed to load enrollment data.");
         }
     }
 
@@ -273,13 +254,16 @@ public class EnrollmentRepository {
                         "SET " +
                         "student_lrn = ?, " +
                         "section_id = ?, " +
-                        "sem_term = ?," +
+                        "sem_term = ?, " +
                         "shs_track_id = ?, " +
                         "shs_strand_id = ?, " +
                         "grade_level = ? " +
                         "WHERE enrollment_id = ?";
 
         try (PreparedStatement statement = conn.prepareStatement(query)) {
+            System.out.println(enrollment.getStrandId());
+            System.out.println(enrollment.getEnrollmentId());
+
             statement.setString(1, enrollment.getStudentLrn());
             statement.setInt(2, enrollment.getSectionId());
             statement.setString(3, enrollment.getSemTerm().getSem());
@@ -292,21 +276,16 @@ public class EnrollmentRepository {
         }
     }
 
-    public Integer getActiveSchoolYearId() {
-        String query = "SELECT school_year_id FROM school_year WHERE status = 'Active' LIMIT 1";
+    public Integer getActiveSchoolYearId(Connection conn) throws SQLException {
+        String query = "SELECT school_year_id FROM school_year WHERE status = 'Open' LIMIT 1";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement statement = conn.prepareStatement(query);
+        try (PreparedStatement statement = conn.prepareStatement(query);
                 ResultSet rs = statement.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("school_year_id");
             } else {
                 return null;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to get school year id: " + e.getMessage());
-            return null;
         }
     }
 
@@ -365,25 +344,54 @@ public class EnrollmentRepository {
 
             return enrollmentDTOS;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return null;
         }
     }
 
-    public boolean archiveEnrollmentByLRN(int enrollmentId) {
+    public int archiveEnrollmentByLRN(Connection conn, int enrollmentId) throws SQLException {
         String query = "UPDATE enrollments " +
                         "SET enrollment_status = 'Archived' " +
                         "WHERE enrollment_id = ?";
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query)) {
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
             statement.setInt(1, enrollmentId);
 
-            return statement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to archive enrollment record: " + e.getMessage());
-            return false;
+            return statement.executeUpdate();
         }
+    }
+
+    public List<ClasslistRecordDTO> getClasslistRecords(Connection conn, int gradeLevel, int sectionId) throws SQLException {
+        List<ClasslistRecordDTO> classlistRecordDTOS = new ArrayList<>();
+
+        String query = "SELECT " +
+                        "e.student_lrn, e.grade_level, e.section_id, " +
+                        "s.last_name, s.first_name, s.middle_name, " +
+                        "sec.name AS section_name " +
+                        "FROM enrollments e " +
+                        "LEFT JOIN student s ON e.student_lrn = s.student_lrn " +
+                        "LEFT JOIN sections sec ON e.section_id = sec.section_id " +
+                        "WHERE e.grade_level = ? AND e.section_id = ? AND e.enrollment_status = 'Enrolled'";
+
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, gradeLevel);
+            statement.setInt(2, sectionId);
+
+            try (ResultSet rs = statement.executeQuery()) {
+                 while   (rs.next()) {
+                     classlistRecordDTOS.add(new ClasslistRecordDTO(
+                             rs.getString("student_lrn"),
+                             rs.getString("last_name"),
+                             rs.getString("first_name"),
+                             rs.getString("middle_name"),
+                             rs.getInt("grade_level"),
+                             rs.getInt("section_id"),
+                             rs.getString("section_name")
+                     ));
+                 }
+            }
+        }
+
+        return classlistRecordDTOS;
     }
 }

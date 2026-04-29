@@ -4,10 +4,14 @@ import com.enrollmentsystem.enums.AuditAction;
 import com.enrollmentsystem.enums.AuditModule;
 import com.enrollmentsystem.utils.DateFormatter;
 import com.enrollmentsystem.utils.ModernDatePickerSkin;
-import com.enrollmentsystem.viewmodels.admin.AuditTrailViewModel;
-import com.enrollmentsystem.viewmodels.admin.AuditViewModel;
+import com.enrollmentsystem.viewmodels.admin.audit.AuditTrailViewModel;
+import com.enrollmentsystem.viewmodels.admin.audit.AuditViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -16,8 +20,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.controlsfx.control.textfield.CustomTextField;
+import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -39,6 +45,8 @@ public class AuditController {
     @FXML private TableColumn<AuditViewModel, AuditModule> moduleCol;
     @FXML private TableColumn<AuditViewModel, AuditAction> actionCol;
 
+    @FXML private Button refreshBtn;
+
     private final AuditTrailViewModel viewModel = new AuditTrailViewModel();
 
     @FXML
@@ -48,10 +56,17 @@ public class AuditController {
         setupTable();
         setupPagination();
         setupLoadingState();
-
-        auditTable.setItems(viewModel.getAuditList());
+        setupRefreshButton();
     }
 
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        if (pagination.getCurrentPageIndex() == 0) {
+            viewModel.loadAuditList(0);
+        } else {
+            pagination.setCurrentPageIndex(0);
+        }
+    }
     @FXML
     public void clearFilters() {
         viewModel.clearFilters();
@@ -212,6 +227,10 @@ public class AuditController {
                 }
             }
         });
+
+        auditTable.setItems(viewModel.getAuditList());
+        auditTable.setFocusTraversable(false);
+        auditTable.setFocusModel(null);
     }
 
     private void setupPagination() {
@@ -229,6 +248,7 @@ public class AuditController {
         progressIndicator.getStyleClass().add("progress-indicator");
 
         Label emptyLabel = new Label("No records found.");
+        emptyLabel.getStyleClass().add("place-holder");
 
         auditTable.placeholderProperty().bind(
                 Bindings.when(viewModel.loadingProperty())
@@ -237,5 +257,27 @@ public class AuditController {
         );
 
         pagination.disableProperty().bind(viewModel.loadingProperty());
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

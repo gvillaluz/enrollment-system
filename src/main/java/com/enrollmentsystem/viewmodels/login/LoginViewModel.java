@@ -34,6 +34,7 @@ public class LoginViewModel {
         if (ValidationHelper.isNullOrEmpty(username.get()) || ValidationHelper.isNullOrEmpty(password.get())) {
             errorMessage.set("All fields are required.");
             isLoading.set(false);
+
             return CompletableFuture.failedFuture(
                     new IllegalArgumentException("All fields are required.")
             );
@@ -44,16 +45,16 @@ public class LoginViewModel {
         var loginUser = new LoginDTO(username.get(), password.get());
 
         return _service.loginUser(loginUser)
-                .exceptionally(ex -> {
-                    System.out.println("Failed to login user. Please try again later.");
-                    Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+                .whenComplete((res, ex) -> {
+                    Platform.runLater(() -> isLoading.set(false));
 
-                    Platform.runLater(() -> {
-                        errorMessage.set(cause.getMessage());
-                        isLoading.set(false);
-                    });
+                    if (ex != null) {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 
-                    return null;
+                        System.out.println(cause.getMessage());
+
+                        Platform.runLater(() -> errorMessage.set(cause.getMessage()));
+                    }
                 });
     }
 

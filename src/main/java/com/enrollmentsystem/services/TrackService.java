@@ -8,8 +8,10 @@ import com.enrollmentsystem.models.Track;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.repositories.AuditRepository;
 import com.enrollmentsystem.repositories.TrackRepository;
+import com.enrollmentsystem.utils.DatabaseConnection;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,15 +27,14 @@ public class TrackService extends BaseService {
         validateSession();
 
         return CompletableFuture.supplyAsync(() -> {
-            var tracks = _repo.getAllTracks();
-
-            if (tracks == null) {
-                throw new IllegalArgumentException("Failed to load tracks.");
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                return _repo.getAllTracks(conn).stream()
+                        .map(TrackMapper::toDTO)
+                        .toList();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to load tracks.");
             }
-
-            return tracks.stream()
-                    .map(TrackMapper::toDTO)
-                    .toList();
         });
     }
 
@@ -52,28 +53,35 @@ public class TrackService extends BaseService {
         var track = TrackMapper.toNewModel(trackDTO);
 
         return CompletableFuture.supplyAsync(() -> {
-            Track existingTrack = _repo.findTrackByCode(track.getTrackCode());
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Track existingTrack = _repo.findTrackByCode(conn, track.getTrackCode());
 
-            if (existingTrack != null) {
-                if (!existingTrack.isArchived()) {
-                    throw new IllegalArgumentException("Track code is already in use.");
-                } else {
-                    return _repo.restoreAndUpdateTrack(track);
+                if (existingTrack != null) {
+                    if (!existingTrack.isArchived()) {
+                        throw new IllegalArgumentException("Track code is already in use.");
+                    } else {
+                        return _repo.restoreAndUpdateTrack(conn, track) != 0;
+                    }
                 }
+
+                if (_repo.existsByDescription(conn, track.getTrackDescription(), -1))
+                    throw new IllegalArgumentException("Track description is already in use.");
+
+                _repo.addTrack(conn, track);
+
+                logActivity(
+                        conn,
+                        track.getTrackCode(),
+                        AuditAction.ADD,
+                        AuditModule.TRACK_MANAGEMENT,
+                        "Added new track: " + track.getTrackCode()
+                );
+
+                return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to add track.");
             }
-
-            if (_repo.existsByDescription(track.getTrackDescription(), -1))
-                throw new IllegalArgumentException("Track description is already in use.");
-
-            Integer newTrackId = _repo.addTrack(track);
-
-            if (newTrackId == null) {
-                return false;
-            }
-
-            logActivity(newTrackId.toString(), AuditAction.ADD, AuditModule.TRACK_MANAGEMENT, "Added new track: " + newTrackId);
-
-            return true;
         });
     }
 
@@ -89,22 +97,33 @@ public class TrackService extends BaseService {
         var track = TrackMapper.toModel(trackDTO);
 
         return CompletableFuture.supplyAsync(() -> {
-            Track existingTrack = _repo.findTrackByCode(track.getTrackCode());
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                Track existingTrack = _repo.findTrackByCode(conn, track.getTrackCode());
 
-            if (existingTrack != null && existingTrack.getTrackId() != track.getTrackId()) {
-                throw new IllegalArgumentException("Track code is already in use.");
-            }
+                if (existingTrack != null && existingTrack.getTrackId() != track.getTrackId()) {
+                    throw new IllegalArgumentException("Track code is already in use.");
+                }
 
-            if (_repo.existsByDescription(track.getTrackDescription(), track.getTrackId())) {
-                throw new IllegalArgumentException("Track description is already in use.");
-            }
+                if (_repo.existsByDescription(conn, track.getTrackDescription(), track.getTrackId())) {
+                    throw new IllegalArgumentException("Track description is already in use.");
+                }
 
-            if (_repo.updateTrackById(track)) {
-                logActivity(String.valueOf(track.getTrackId()), AuditAction.UPDATE, AuditModule.TRACK_MANAGEMENT, "Updated track: " + track.getTrackId());
+                int rowsAffected = _repo.updateTrackById(conn, track);
+                if (rowsAffected == 0) return false;
+
+                logActivity(
+                        conn,
+                        track.getTrackCode(),
+                        AuditAction.UPDATE,
+                        AuditModule.TRACK_MANAGEMENT,
+                        "Updated track: " + track.getTrackCode()
+                );
+
                 return true;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to update track.");
             }
-
-            return false;
         });
     }
 
@@ -117,6 +136,14 @@ public class TrackService extends BaseService {
                 new SecurityException("Unauthorized access.")
         );
 
-        return CompletableFuture.supplyAsync(() -> _repo.deleteTrackById(trackId));
+        return CompletableFuture.supplyAsync(() -> {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                int rowsAffected = _repo.deleteTrackById(conn, trackId);
+                return rowsAffected != 0;
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException("Failed to delete track.");
+            }
+        });
     }
 }

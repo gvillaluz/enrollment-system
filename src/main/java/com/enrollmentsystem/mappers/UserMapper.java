@@ -3,7 +3,7 @@ package com.enrollmentsystem.mappers;
 import com.enrollmentsystem.dtos.UserDTO;
 import com.enrollmentsystem.enums.UserStatus;
 import com.enrollmentsystem.models.User;
-import com.enrollmentsystem.viewmodels.admin.UserFormViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserFormViewModel;
 
 public class UserMapper {
     public static User toNewModel(UserDTO dto) {

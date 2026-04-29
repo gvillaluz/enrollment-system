@@ -8,9 +8,12 @@
     import com.enrollmentsystem.utils.filters.ModalConfig;
     import com.enrollmentsystem.utils.NotificationHelper;
     import com.enrollmentsystem.utils.ViewNavigator;
-    import com.enrollmentsystem.viewmodels.enrollment.EnrollmentSummaryViewModel;
-    import com.enrollmentsystem.viewmodels.enrollment.EnrollmentViewModel;
+    import com.enrollmentsystem.viewmodels.enrollment.addstudent.EnrollmentSummaryViewModel;
+    import com.enrollmentsystem.viewmodels.enrollment.addstudent.EnrollmentViewModel;
+    import javafx.animation.Animation;
+    import javafx.animation.Interpolator;
     import javafx.animation.PauseTransition;
+    import javafx.animation.RotateTransition;
     import javafx.application.Platform;
     import javafx.beans.binding.Bindings;
     import javafx.event.ActionEvent;
@@ -46,6 +49,8 @@
         @FXML private TableColumn<EnrollmentSummaryViewModel, EnrollmentStatus> statusCol;
         @FXML private TableColumn<EnrollmentSummaryViewModel, Void> actionCol;
 
+        @FXML private Button refreshBtn;
+
         @FXML private Pagination pagination;
 
         private final EnrollmentViewModel viewModel = new EnrollmentViewModel();
@@ -64,11 +69,19 @@
             setupActionColumn();
             setupPagination();
             setupLoadingState();
+            setupRefreshButton();
 
             viewModel.setGradeLevel(gradeLevel);
-            enrollmentTable.setItems(viewModel.getEnrollmentList());
-            enrollmentTable.setFocusModel(null);
-            enrollmentTable.setFocusTraversable(false);
+
+        }
+
+        @FXML
+        public void onRefresh(ActionEvent event) {
+            if (pagination.getCurrentPageIndex() == 0) {
+                viewModel.loadData(0);
+            } else {
+                pagination.setCurrentPageIndex(0);
+            }
         }
 
         private void setSearchBar() {
@@ -150,7 +163,7 @@
                     if (empty) {
                         setText(null);
                     } else if (name == null) {
-                        setText("No Section");
+                        setText("Unassigned");
                     } else {
                         setText(name);
                     }
@@ -186,6 +199,8 @@
 
             enrollmentTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
             enrollmentTable.setFocusTraversable(false);
+            enrollmentTable.setItems(viewModel.getEnrollmentList());
+            enrollmentTable.setFocusModel(null);
         }
 
         private void setupActionColumn() {
@@ -278,7 +293,7 @@
                             rootScene.setCursor(Cursor.DEFAULT);
                             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
                             NotificationHelper.showToast(rootWindow, cause.getMessage(), "error");
-                            ex.printStackTrace();
+                            System.out.println(ex.getMessage());
                         });
                         return null;
                     });
@@ -292,7 +307,6 @@
                 viewModel.archiveEnrollment(enrollment, pagination.getCurrentPageIndex())
                         .thenAccept(success -> {
                             Platform.runLater(() -> {
-                                currentStage.getScene().setCursor(Cursor.DEFAULT);
                                 if (success) {
                                     NotificationHelper.showToast(
                                             currentStage,
@@ -312,7 +326,6 @@
                             Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
 
                             Platform.runLater(() -> {
-                                currentStage.getScene().setCursor(Cursor.DEFAULT);
                                 NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
                             });
 
@@ -328,6 +341,8 @@
                             onConfirmDelete
                     )
             );
+
+            currentStage.getScene().setCursor(Cursor.DEFAULT);
         }
 
         private Parent loadModal(EnrollmentFormDTO dto) {
@@ -342,6 +357,7 @@
                 EnrollmentFormController controller = loader.getController();
                 controller.setOnSaveSuccess(refreshTable);
                 controller.updateEnrollmentData(dto);
+                controller.applyEditMode();
                 controller.setGradeLevel(gradeLevel);
 
                 content.getStylesheets().add(
@@ -352,7 +368,7 @@
 
                 return content;
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
                 return null;
             }
         }
@@ -380,5 +396,27 @@
             );
 
             pagination.disableProperty().bind(viewModel.loadingProperty());
+        }
+
+        private void setupRefreshButton() {
+            FontIcon refreshIcon = new FontIcon("fas-redo");
+            refreshIcon.getStyleClass().add("refresh-icon");
+
+            refreshBtn.setGraphic(refreshIcon);
+            refreshBtn.setGraphicTextGap(8);
+
+            RotateTransition rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+            rotateTransition.setByAngle(360);
+            rotateTransition.setCycleCount(Animation.INDEFINITE);
+            rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+            viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+                if (isNowProcessing) {
+                    rotateTransition.play();
+                } else {
+                    rotateTransition.stop();
+                    refreshIcon.setRotate(0);
+                }
+            });
         }
     }

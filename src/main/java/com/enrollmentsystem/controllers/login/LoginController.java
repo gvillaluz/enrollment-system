@@ -4,6 +4,7 @@ import com.enrollmentsystem.App;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.viewmodels.login.LoginViewModel;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,7 +82,7 @@ public class LoginController {
 
             currentScene.setRoot(dashboardRoot);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -100,7 +101,7 @@ public class LoginController {
 
             currentScene.setRoot(dashboardRoot);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -110,15 +111,13 @@ public class LoginController {
         passwordTextField.textProperty().bindBidirectional(passwordField.textProperty());
         errorLabel.textProperty().bind(viewModel.errorMessageProperty());
 
+        loginBtn.disableProperty().bind(viewModel.isLoadingProperty());
+
         viewModel.isLoadingProperty().addListener((obs, oldVal, isLoading) -> {
             if (isLoading){
                 loginBtn.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                loginBtn.addEventFilter(MouseEvent.ANY, Event::consume);
-                loginBtn.addEventFilter(KeyEvent.ANY, Event::consume);
             } else {
                 loginBtn.setContentDisplay(ContentDisplay.TEXT_ONLY);
-                loginBtn.removeEventFilter(MouseEvent.ANY, Event::consume);
-                loginBtn.removeEventFilter(KeyEvent.ANY, Event::consume);
             }
         });
     }

@@ -24,24 +24,6 @@
     -fx-font-size: 0.875em;
 }
 
-.table-view {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-color: #B9B9B9;
-}
-
-.table-view .table-row-cell:hover {
-    -fx-background-color: #E5E5E5;
-}
-
-.table-row-cell:hover .table-cell {
-    -fx-border-color: transparent;
-}
-
-.table-row-cell:hover .separator .line {
-    -fx-border-color: transparent; /* Match your orange theme on hover */
-}
-
 .add-user-btn {
     -fx-background-color: #6988AC;
     -fx-text-fill: #FAFAFA;
@@ -66,4 +48,8 @@
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-background-radius: 2;
+}
+
+.place-holder {
+    -fx-font-size: 15;
 }

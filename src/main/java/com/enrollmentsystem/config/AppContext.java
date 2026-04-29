@@ -12,6 +12,7 @@ import java.sql.SQLException;
 public class AppContext {
     private static AcademicRepository academicRepository;
 
+    private static DashboardRepository dashboardRepository;
     private static UserRepository userRepository;
     private static StudentRepository studentRepository;
     private static EnrollmentRepository enrollmentRepository;
@@ -22,7 +23,9 @@ public class AppContext {
     private static SchoolYearRepository schoolYearRepository;
     private static RequirementRepository requirementRepository;
     private static ArchiveRepository archiveRepository;
+    private static BatchSectioningRepository batchSectioningRepository;
 
+    private static DashboardService dashboardService;
     private static AuthService authService;
     private static UserService userService;
     private static StudentService studentService;
@@ -33,6 +36,26 @@ public class AppContext {
     private static SectionService sectionService;
     private static RequirementService requirementService;
     private static ArchiveService archiveService;
+    private static SchoolYearService schoolYearService;
+    private static BatchSectioningService batchSectioningService;
+    private static ClasslistService classlistService;
+
+    private static DashboardRepository getDashboardRepository() {
+        if (dashboardRepository == null) {
+            dashboardRepository = new DashboardRepository();
+        }
+        return dashboardRepository;
+    }
+
+    public static DashboardService getDashboardService() {
+        if (dashboardService == null) {
+            dashboardService = new DashboardService(
+                    getDashboardRepository(),
+                    getSchoolYearRepository()
+            );
+        }
+        return dashboardService;
+    }
 
     public static AcademicRepository getAcademicRepository() {
         if (academicRepository == null) {
@@ -119,7 +142,10 @@ public class AppContext {
 
     public static StudentService getStudentService() {
         if (studentService == null) {
-            studentService = new StudentService(getStudentRepository());
+            studentService = new StudentService(
+                    getStudentRepository(),
+                    getSchoolYearRepository()
+            );
         }
         return studentService;
     }
@@ -201,6 +227,16 @@ public class AppContext {
         return schoolYearRepository;
     }
 
+    public static SchoolYearService getSchoolYearService() {
+        if (schoolYearService == null) {
+            schoolYearService = new SchoolYearService(
+                    getSchoolYearRepository(),
+                    getAuditRepository()
+            );
+        }
+        return schoolYearService;
+    }
+
     public static ArchiveRepository getArchiveRepository() {
         if (archiveRepository == null) {
             archiveRepository = new ArchiveRepository();
@@ -217,5 +253,36 @@ public class AppContext {
             );
         }
         return archiveService;
+    }
+
+    private static BatchSectioningRepository getBatchSectioningRepository() {
+        if (batchSectioningRepository == null) {
+            batchSectioningRepository = new BatchSectioningRepository();
+        }
+        return batchSectioningRepository;
+    }
+
+    public static BatchSectioningService getBatchSectioningService() {
+        if (batchSectioningService == null) {
+            batchSectioningService = new BatchSectioningService(
+                    getBatchSectioningRepository(),
+                    getAuditRepository(),
+                    getSchoolYearRepository(),
+                    getSectionRepository()
+            );
+        }
+        return batchSectioningService;
+    }
+
+    public static ClasslistService getClasslistService() {
+        if (classlistService == null) {
+            classlistService = new ClasslistService(
+                getEnrollmentRepository(),
+                getSectionRepository(),
+                getAuditRepository(),
+                getSchoolYearRepository()
+            );
+        }
+        return classlistService;
     }
 }

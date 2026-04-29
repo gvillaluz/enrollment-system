@@ -3,7 +3,6 @@ package com.enrollmentsystem.dtos;
 public class SectionDTO {
     private int sectionId;
     private String sectionName;
-    private int maxCapacity;
     private int schoolYearId;
     private String schoolYear;
     private int strandId;
@@ -12,11 +11,10 @@ public class SectionDTO {
 
     public SectionDTO() {}
 
-    public SectionDTO(int sectionId, String sectionName, int maxCapacity, int schoolYearId,
+    public SectionDTO(int sectionId, String sectionName, int schoolYearId,
                       String schoolYear, int strandId, String strandCode, String roomAssignment) {
         this.sectionId = sectionId;
         this.sectionName = sectionName;
-        this.maxCapacity = maxCapacity;
         this.schoolYearId = schoolYearId;
         this.schoolYear = schoolYear;
         this.strandId = strandId;
@@ -29,9 +27,6 @@ public class SectionDTO {
 
     public String getSectionName() { return sectionName; }
     public void setSectionName(String sectionName) { this.sectionName = sectionName; }
-
-    public int getMaxCapacity() { return maxCapacity; }
-    public void setMaxCapacity(int maxCapacity) { this.maxCapacity = maxCapacity; }
 
     public int getSchoolYearId() { return schoolYearId; }
     public void setSchoolYearId(int schoolYearId) { this.schoolYearId = schoolYearId; }

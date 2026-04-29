@@ -13,11 +13,12 @@ public class RequirementSummaryDTO {
     private Boolean au;
     private Boolean form5;
     private Boolean alsCol;
+    private int noteCount;
 
     public RequirementSummaryDTO() {}
 
     public RequirementSummaryDTO(int studentRequirementId, String lrn, String lastName, String firstName, String middleName,
-                                 Boolean beef, Boolean sf9, Boolean psa, Boolean gmc, Boolean au, Boolean form5, Boolean alsCol) {
+                                 Boolean beef, Boolean sf9, Boolean psa, Boolean gmc, Boolean au, Boolean form5, Boolean alsCol, int noteCount) {
         this.studentRequirementId = studentRequirementId;
         this.lrn = lrn;
         this.lastName = lastName;
@@ -30,6 +31,7 @@ public class RequirementSummaryDTO {
         this.au = au;
         this.form5 = form5;
         this.alsCol = alsCol;
+        this.noteCount = noteCount;
     }
 
     public int getStudentRequirementId() { return studentRequirementId; }
@@ -67,4 +69,7 @@ public class RequirementSummaryDTO {
 
     public Boolean getAlsCol() { return alsCol; }
     public void setAlsCol(Boolean alsCol) { this.alsCol = alsCol; }
+
+    public int getNoteCount() { return noteCount; }
+    public void setNoteCount(int noteCount) { this.noteCount = noteCount; }
 }

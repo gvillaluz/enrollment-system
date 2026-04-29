@@ -62,24 +62,6 @@
     -fx-background-color: #E0E0E0;
 }
 
-.table-view {
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
-    -fx-border-color: #B9B9B9;
-}
-
-.table-view .table-row-cell:hover {
-    -fx-background-color: lightgray;
-}
-
-.table-row-cell:hover .table-cell {
-    -fx-border-color: transparent;
-}
-
-.table-row-cell:hover .separator .line {
-    -fx-border-color: transparent;
-}
-
 .date-picker-popup .month-year-pane .combo-box {
     -fx-background-color: transparent;
     -fx-border-color: #D1D5DB;

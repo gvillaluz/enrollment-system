@@ -1,10 +1,10 @@
 package com.enrollmentsystem.utils;
 
 import com.enrollmentsystem.enums.Role;
-import com.enrollmentsystem.viewmodels.admin.UserFormViewModel;
-import com.enrollmentsystem.viewmodels.admin.UserViewModel;
-import com.enrollmentsystem.viewmodels.enrollment.AcademicInformationViewModel;
-import com.enrollmentsystem.viewmodels.enrollment.LearnerInformationViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserFormViewModel;
+import com.enrollmentsystem.viewmodels.admin.user.UserViewModel;
+import com.enrollmentsystem.viewmodels.enrollment.addstudent.AcademicInformationViewModel;
+import com.enrollmentsystem.viewmodels.enrollment.addstudent.LearnerInformationViewModel;
 import javafx.beans.property.Property;
 import javafx.beans.property.StringProperty;
 

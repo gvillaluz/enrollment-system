@@ -36,6 +36,9 @@ public class ConfirmationModalController {
         if (config.getTitle().equals("Delete")) {
             confirmBtn.getStyleClass().add("delete");
             confirmBtn.setText("Delete");
+        } else if (config.getTitle().equals("⚠️ Warning: Existing Assignments Detected")) {
+            confirmBtn.getStyleClass().add("warning");
+            confirmBtn.setText("Reset");
         } else {
             confirmBtn.getStyleClass().add("archive");
             confirmBtn.setText("Continue");

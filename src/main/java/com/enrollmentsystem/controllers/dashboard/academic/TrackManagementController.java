@@ -4,9 +4,13 @@ import com.enrollmentsystem.App;
 import com.enrollmentsystem.utils.filters.ModalConfig;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
-import com.enrollmentsystem.viewmodels.academic.TrackManagementViewModel;
-import com.enrollmentsystem.viewmodels.academic.TrackViewModel;
+import com.enrollmentsystem.viewmodels.academic.track.TrackManagementViewModel;
+import com.enrollmentsystem.viewmodels.academic.track.TrackViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
@@ -30,20 +35,28 @@ public class TrackManagementController {
     @FXML private TableColumn<TrackViewModel, String> descriptionCol;
     @FXML private TableColumn<TrackViewModel, Void> actionCol;
 
+    @FXML private Button refreshBtn;
+
     private final TrackManagementViewModel viewModel = new TrackManagementViewModel();
+    private RotateTransition rotateTransition;
 
     @FXML
     private void initialize() {
         setupTable();
         setupActionColumn();
+        setupRefreshButton();
 
         viewModel.loadTracks();
-        trackTable.setItems(viewModel.getTracks());
     }
 
     @FXML
     private void openAddModal() {
         loadModal(null);
+    }
+
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        viewModel.loadTracks();
     }
 
     private void setupTable() {
@@ -53,6 +66,7 @@ public class TrackManagementController {
 
         trackTable.setFocusTraversable(false);
         trackTable.setFocusModel(null);
+        trackTable.setItems(viewModel.getTracks());
     }
 
     private void setupActionColumn() {
@@ -61,16 +75,9 @@ public class TrackManagementController {
                     @Override
                     public TableCell<TrackViewModel, Void> call(final TableColumn<TrackViewModel, Void> param) {
                         return new TableCell<>() {
-
-                            // 1. Create Labels
-//                            private final Label editLbl = new Label("Edit");
-//                            private final Label archiveLbl = new Label("Delete");
-
                             private final FontIcon editIcon = new FontIcon("fas-edit");
                             private final FontIcon deleteIcon = new FontIcon("fas-trash-alt");
 
-                            // 2. Create Containers (HBoxes) for the labels
-                            //    This allows the whole "box" to be clickable, not just the text.
                             private final HBox editBox = new HBox(editIcon);
                             private final HBox archiveBox = new HBox(deleteIcon);
                             private final Separator separator = new Separator(javafx.geometry.Orientation.VERTICAL);
@@ -148,7 +155,7 @@ public class TrackManagementController {
 
             ViewNavigator.showModal(modalContent, owner);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -192,5 +199,27 @@ public class TrackManagementController {
                         onConfirmDelete
                 )
         );
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

@@ -4,17 +4,24 @@ import com.enrollmentsystem.App;
 import com.enrollmentsystem.utils.filters.ModalConfig;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.utils.ViewNavigator;
-import com.enrollmentsystem.viewmodels.academic.StrandManagementViewModel;
-import com.enrollmentsystem.viewmodels.academic.StrandViewModel;
+import com.enrollmentsystem.viewmodels.academic.strand.StrandManagementViewModel;
+import com.enrollmentsystem.viewmodels.academic.strand.StrandViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Callback;
+import javafx.util.Duration;
 import org.kordamp.ikonli.javafx.FontIcon;
 
 import java.io.IOException;
@@ -26,15 +33,24 @@ public class StrandManagementController {
     @FXML private TableColumn<StrandViewModel, String> strandCodeCol, descriptionCol, trackCodeCol;
     @FXML private TableColumn<StrandViewModel, Void> actionCol;
 
+    @FXML private Button refreshBtn;
+
     private final StrandManagementViewModel viewModel = new StrandManagementViewModel();
+    private RotateTransition rotateTransition;
 
     @FXML
     private void initialize() {
         setupTable();
         setupActionColumn();
+        setupRefreshButton();
+        setupLoadingState();
 
         viewModel.loadStrands();
-        strandTable.setItems(viewModel.getStrands());
+    }
+
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        viewModel.loadStrands();
     }
 
     @FXML
@@ -48,6 +64,7 @@ public class StrandManagementController {
 
         strandTable.setFocusTraversable(false);
         strandTable.setFocusModel(null);
+        strandTable.setItems(viewModel.getStrands());
     }
 
     private void setupActionColumn() {
@@ -131,7 +148,6 @@ public class StrandManagementController {
 
             StrandFormController controller = loader.getController();
             controller.setOnSaveSuccess(refreshTable);
-            controller.setViewModel(viewModel);
             controller.setEditStrand(strand);
 
             if (strand != null) controller.setEditStrand(strand);
@@ -142,7 +158,7 @@ public class StrandManagementController {
 
             ViewNavigator.showModal(modalContent, owner);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
@@ -186,5 +202,42 @@ public class StrandManagementController {
                         onConfirmDelete
                 )
         );
+    }
+
+    private void setupLoadingState() {
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        progressIndicator.setMaxSize(50, 50);
+        progressIndicator.getStyleClass().add("progress-indicator");
+
+        Label emptyLabel = new Label("No records found.");
+        emptyLabel.getStyleClass().add("place-holder");
+
+        strandTable.placeholderProperty().bind(
+                Bindings.when(viewModel.loadingProperty())
+                        .then((Node) progressIndicator)
+                        .otherwise((Node) emptyLabel)
+        );
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

@@ -31,7 +31,7 @@ public class AuditRepository {
         }
     }
 
-    public Integer countLogs(AuditFilter filter) {
+    public Integer countLogs(Connection conn, AuditFilter filter) {
         List<Object> params = new ArrayList<>();
         var query = new StringBuilder(
                 "SELECT COUNT(au.log_id) FROM audit_log au " +
@@ -63,8 +63,7 @@ public class AuditRepository {
             params.add(filter.getDateTo());
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 statement.setObject(i + 1, params.get(i));
@@ -80,7 +79,7 @@ public class AuditRepository {
         }
     }
 
-    public List<AuditLog> getLogs(AuditFilter filter) {
+    public List<AuditLog> getLogs(Connection conn, AuditFilter filter) throws SQLException {
         List<AuditLog> logs = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
@@ -118,8 +117,7 @@ public class AuditRepository {
         query.append("ORDER BY au.timestamp DESC LIMIT 15 OFFSET ?");
         params.add(filter.getOffset());
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 statement.setObject(i + 1, params.get(i));
@@ -142,10 +140,6 @@ public class AuditRepository {
             }
 
             return logs;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to load audit trail logs: " + e.getMessage());
-            return null;
         }
     }
 }

@@ -1,8 +1,10 @@
 package com.enrollmentsystem.mappers;
 
+import com.enrollmentsystem.dtos.RequirementNoteDTO;
 import com.enrollmentsystem.dtos.StudentRequirementDTO;
+import com.enrollmentsystem.models.RequirementNote;
 import com.enrollmentsystem.models.StudentRequirement;
-import com.enrollmentsystem.viewmodels.enrollment.StudentRequirementViewModel;
+import com.enrollmentsystem.viewmodels.enrollment.requirements.StudentRequirementViewModel;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -72,5 +74,28 @@ public class RequirementMapper {
         return requirementMap.values().stream()
                 .map(RequirementMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public static RequirementNoteDTO toDTO(RequirementNote note) {
+        var dto = new RequirementNoteDTO();
+        dto.setRequirementNoteId(note.getRequirementNoteId());
+        dto.setNote(note.getNote());
+        dto.setResolved(note.isResolved());
+        dto.setLrn(note.getLrn());
+        dto.setDateAdded(note.getDateAdded());
+
+        return dto;
+    }
+
+    public static RequirementNote toNewNoteModel(RequirementNoteDTO dto) {
+        var note = new RequirementNote();
+        note.setNote(dto.getNote());
+        note.setResolved(dto.isResolved());
+        note.setLrn(dto.getLrn());
+        note.setUserId(dto.getUserId());
+        note.setDateAdded(dto.getDateAdded());
+        note.setUpdatedAt(dto.getUpdatedAt());
+
+        return note;
     }
 }

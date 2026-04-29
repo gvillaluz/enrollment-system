@@ -6,6 +6,7 @@ import com.enrollmentsystem.models.User;
 import com.enrollmentsystem.models.UserSession;
 import com.enrollmentsystem.utils.ViewNavigator;
 import com.enrollmentsystem.viewmodels.core.MainViewModel;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,6 +36,8 @@ public class MainController extends BaseController {
     public void initialize() {
         BaseController.setSession(UserSession.getInstance());
         BaseController.setRoot(root);
+
+        root.setOnMouseClicked(e -> Platform.runLater(() -> root.requestFocus()));
 
         if (!BaseController.session.isAdmin()) {
             adminTabs.setVisible(false);
@@ -100,9 +103,9 @@ public class MainController extends BaseController {
     private String getFolderFor(String id) {
         return switch (id) {
             case "Dashboard" -> "core";
-            case "Enrollment", "ClasslistGenerator", "RequirementsChecklist", "RunBatchSectioning",
+            case "Enrollment", "RequirementsChecklist", "RunBatchSectioning",
                  "StudentRecords" -> "enrollment";
-            case "ManageSections", "ManageStrands", "ManageTracks", "SchoolYearModule" -> "academic";
+            case "ManageSections", "ClasslistGenerator", "ManageStrands", "ManageTracks", "SchoolYearModule" -> "academic";
             default -> "admin";
         };
     }

@@ -5,58 +5,39 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <AnchorPane styleClass="anchor-pane" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.enrollmentsystem.controllers.dashboard.academic.SYModuleController">
     <children>
         <VBox prefHeight="529.0" prefWidth="736.0" spacing="10.0" styleClass="main-vbox" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
             <children>
-                <Label styleClass="title-label" text="School Year Module" />
-                <HBox maxHeight="258.0" prefHeight="200.0" prefWidth="736.0" styleClass="add-row">
-                    <children>
-                        <VBox maxHeight="258.0" prefHeight="181.0" prefWidth="453.0" spacing="15.0" styleClass="add-container">
-                            <children>
-                                <Label styleClass="add-title" text="Create New" />
-                                <VBox alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="413.0" styleClass="field-container">
-                                    <children>
-                                        <Label styleClass="labels" text="Start Year">
-                                            <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                            </VBox.margin>
-                                        </Label>
-                                        <TextField fx:id="startYearField" styleClass="fields">
-                                            <VBox.margin>
-                                                <Insets bottom="2.0" />
-                                            </VBox.margin>
-                                        </TextField>
-                                        <Label styleClass="labels" text="End Year">
-                                            <VBox.margin>
-                                                <Insets bottom="5.0" />
-                                            </VBox.margin>
-                                        </Label>
-                                        <TextField fx:id="endYearField" styleClass="fields" />
-                                    </children>
-                                </VBox>
-                                <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="594.0">
-                                    <children>
-                                        <Button mnemonicParsing="false" onAction="#saveYear" styleClass="save-add-btn" text="Save" />
-                                    </children>
-                                </HBox>
-                            </children>
-                            <padding>
-                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                            </padding>
-                            <HBox.margin>
-                                <Insets />
-                            </HBox.margin>
-                        </VBox>
-                    </children>
+            <HBox alignment="CENTER">
+               <children>
+                      <Label styleClass="title-label" text="School Year Module" />
+                  <Region prefHeight="0.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="refreshBtn" mnemonicParsing="false" onAction="#onRefresh" prefHeight="40.0" prefWidth="106.0" styleClass="refresh-btn" text="Refresh" />
+               </children>
+            </HBox>
+                <HBox alignment="CENTER_RIGHT" maxHeight="28.0" prefHeight="28.0" prefWidth="736.0" styleClass="add-row">
                <VBox.margin>
-                  <Insets bottom="10.0" />
+                  <Insets />
                </VBox.margin>
+               <children>
+                  <Button graphicTextGap="10.0" maxHeight="29.0" maxWidth="165.0" minHeight="29.0" minWidth="165.0" mnemonicParsing="false" onAction="#openAddModal" prefHeight="29.0" prefWidth="165.0" styleClass="addBtn" text="Add New">
+                     <graphic>
+                        <ImageView fitHeight="10.0" fitWidth="10.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../../assets/icons/add-icon.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+               </children>
                 </HBox>
                 <VBox maxHeight="600.0" prefHeight="200.0" prefWidth="736.0" styleClass="record-container" VBox.vgrow="ALWAYS">
                     <children>
@@ -66,6 +47,7 @@
                                 <TableColumn fx:id="academicYearIdCol" editable="false" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" sortable="false" text="Academic Year ID" />
                                 <TableColumn fx:id="academicYearCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="200.0" prefWidth="600.0" sortable="false" text="Academic Year" />
                                 <TableColumn fx:id="statusCol" editable="false" maxWidth="184.0" minWidth="184.0" prefWidth="184.0" sortable="false" text="Status" />
+                                <TableColumn fx:id="actionCol" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" sortable="false" text="Action" />
                             </columns>
                             <columnResizePolicy>
                                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

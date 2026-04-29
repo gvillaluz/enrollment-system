@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArchiveRepository {
-    public Integer getTotalRows(ArchiveFilter filter) {
+    public Integer getTotalRows(Connection conn, ArchiveFilter filter) throws SQLException {
         List<Object> params = new ArrayList<>();
         var query = new StringBuilder(
                 "SELECT COUNT(e.enrollment_id) FROM enrollments e " +
@@ -38,8 +38,7 @@ public class ArchiveRepository {
             params.add(search);
         }
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 statement.setObject(i + 1, params.get(i));
@@ -49,13 +48,10 @@ public class ArchiveRepository {
                 return rs.next() ? rs.getInt(1) : 0;
             }
 
-        } catch (SQLException e) {
-            System.out.println("Failed to get total rows: " + e.getMessage());
-            throw new RuntimeException("Failed to load total rows");
         }
     }
 
-    public List<ArchiveDTO> getArchiveEnrollments(ArchiveFilter filter) {
+    public List<ArchiveDTO> getArchiveEnrollments(Connection conn, ArchiveFilter filter) throws SQLException {
         List<ArchiveDTO> archiveDTOS = new ArrayList<>();
         List<Object> params = new ArrayList<>();
 
@@ -94,8 +90,7 @@ public class ArchiveRepository {
         query.append("ORDER BY e.date_enrolled DESC LIMIT 15 OFFSET ?");
         params.add(filter.getOffset());
 
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement statement = conn.prepareStatement(query.toString())) {
+        try (PreparedStatement statement = conn.prepareStatement(query.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 statement.setObject(i + 1, params.get(i));
@@ -125,9 +120,28 @@ public class ArchiveRepository {
 
             return archiveDTOS;
 
-        } catch (SQLException e) {
-            System.out.println("Failed to load archives: " + e.getMessage());
-            throw new RuntimeException("Failed to load archive records");
+        }
+    }
+
+    public void updateRecordStatus(Connection conn, int archiveId) throws SQLException {
+        String query = "UPDATE enrollments " +
+                        "SET enrollment_status = 'Enrolled' " +
+                        "WHERE enrollment_id = ?";
+
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, archiveId);
+
+            statement.executeUpdate();
+        }
+    }
+
+    public void deleteRecord(Connection conn, int archiveId) throws SQLException {
+        String query = "DELETE FROM enrollments WHERE enrollment_id = ? AND enrollment_status = 'Archived'";
+
+        try (PreparedStatement statement = conn.prepareStatement(query)) {
+            statement.setInt(1, archiveId);
+
+            statement.executeUpdate();
         }
     }
 }
