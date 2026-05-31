@@ -366,7 +366,7 @@ public class EnrollmentRepository {
 
         String query = "SELECT " +
                         "e.student_lrn, e.grade_level, e.section_id, " +
-                        "s.last_name, s.first_name, s.middle_name, " +
+                        "s.last_name, s.first_name, s.middle_name, s.sex AS gender, " +
                         "sec.name AS section_name " +
                         "FROM enrollments e " +
                         "LEFT JOIN student s ON e.student_lrn = s.student_lrn " +
@@ -384,6 +384,7 @@ public class EnrollmentRepository {
                              rs.getString("last_name"),
                              rs.getString("first_name"),
                              rs.getString("middle_name"),
+                             Gender.fromString(rs.getString("gender")),
                              rs.getInt("grade_level"),
                              rs.getInt("section_id"),
                              rs.getString("section_name")

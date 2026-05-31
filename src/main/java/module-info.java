@@ -12,6 +12,8 @@ module com.enrollmentsystem {
     requires mysql.connector.j;
     requires java.compiler;
     requires jbcrypt;
+    requires org.apache.poi.poi;
+    requires org.apache.poi.ooxml;
 
     opens com.enrollmentsystem to javafx.fxml;
     exports com.enrollmentsystem;

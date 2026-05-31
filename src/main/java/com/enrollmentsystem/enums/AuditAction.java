@@ -8,6 +8,7 @@ public enum AuditAction {
     DELETE("Delete"),
     LOGIN("Login"),
     LOGOUT("Logout"),
+    EXPORT("Export"),
     RUN_BATCH_SECTIONING("Run Batch Sectioning");
 
     private String value;

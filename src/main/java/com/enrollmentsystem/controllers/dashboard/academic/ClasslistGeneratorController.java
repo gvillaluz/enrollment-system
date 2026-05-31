@@ -4,19 +4,31 @@ import com.enrollmentsystem.dtos.SectionDTO;
 import com.enrollmentsystem.utils.NotificationHelper;
 import com.enrollmentsystem.viewmodels.academic.classlist.ClasslistGeneratorViewModel;
 import com.enrollmentsystem.viewmodels.academic.classlist.ClasslistRecordViewModel;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
+import org.kordamp.ikonli.javafx.FontIcon;
+
+import java.io.File;
 
 public class ClasslistGeneratorController {
     @FXML private ComboBox<Integer> gradeLevelDropdown;
     @FXML private ComboBox<SectionDTO> sectionDropdown;
+    @FXML private Button exportBtn, refreshBtn;
 
     @FXML private TableView<ClasslistRecordViewModel> classlistTable;
     @FXML private TableColumn<ClasslistRecordViewModel, String> lrnCol, lastNameCol, firstNameCol, middleNameCol, sectionCol;
@@ -24,11 +36,18 @@ public class ClasslistGeneratorController {
 
     private final ClasslistGeneratorViewModel viewModel = new ClasslistGeneratorViewModel();
 
+    private RotateTransition rotateTransition;
+
     @FXML
     public void initialize() {
         setupDropdown();
         setupTable();
         setupLoadingState();
+        setupRefreshButton();
+
+        exportBtn.disableProperty().bind(
+                Bindings.isEmpty(viewModel.getClasslist())
+        );
     }
 
     @FXML
@@ -72,7 +91,58 @@ public class ClasslistGeneratorController {
 
     @FXML
     public void onExport(ActionEvent event) {
-        System.out.println("Export Record.");
+        Window currentStage = classlistTable.getScene().getWindow();
+        Scene scene = currentStage.getScene();
+        Button btn = (Button) event.getSource();
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Classlist Record");
+        fileChooser.setInitialFileName(sectionDropdown.getValue().getSectionName() + " - " + viewModel.schoolYearProperty().get() + ".xlsx");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "Excel Files (*.xlsx)",
+                "*.xlsx"
+        );
+
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        File selectedFile = fileChooser.showSaveDialog(btn.getScene().getWindow());
+
+        if (selectedFile != null) {
+            scene.setCursor(Cursor.WAIT);
+            viewModel.exportClasslist(selectedFile)
+                    .thenAccept(success -> {
+                        Platform.runLater(() -> {
+                            if (success) {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Classlist exported successfully.",
+                                        "success"
+                                );
+                            } else {
+                                NotificationHelper.showToast(
+                                        currentStage,
+                                        "Failed to export classlist.",
+                                        "error"
+                                );
+                            }
+                            scene.setCursor(Cursor.DEFAULT);
+                        });
+                    })
+                    .exceptionally(ex -> {
+                        Throwable cause = ex.getCause() != null ? ex.getCause() : ex;
+
+                        Platform.runLater(() -> {
+                            NotificationHelper.showToast(currentStage, cause.getMessage(), "error");
+                        });
+                        scene.setCursor(Cursor.DEFAULT);
+                        return null;
+                    });
+        }
+    }
+
+    @FXML
+    public void onRefresh(ActionEvent event) {
+        viewModel.loadClasslist();
     }
 
     public void setupDropdown() {
@@ -151,6 +221,7 @@ public class ClasslistGeneratorController {
         sectionDropdown.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 viewModel.sectionIdProperty().set(newVal.getSectionId());
+                viewModel.sectionNameProperty().set(newVal.getSectionName());
             }
         });
     }
@@ -183,5 +254,27 @@ public class ClasslistGeneratorController {
         );
 
         classlistTable.disableProperty().bind(viewModel.loadingProperty());
+    }
+
+    private void setupRefreshButton() {
+        FontIcon refreshIcon = new FontIcon("fas-redo");
+        refreshIcon.getStyleClass().add("refresh-icon");
+
+        refreshBtn.setGraphic(refreshIcon);
+        refreshBtn.setGraphicTextGap(8);
+
+        rotateTransition = new RotateTransition(Duration.seconds(2), refreshIcon);
+        rotateTransition.setByAngle(360);
+        rotateTransition.setCycleCount(Animation.INDEFINITE);
+        rotateTransition.setInterpolator(Interpolator.LINEAR);
+
+        viewModel.loadingProperty().addListener((obs, wasProcessing, isNowProcessing) -> {
+            if (isNowProcessing) {
+                rotateTransition.play();
+            } else {
+                rotateTransition.stop();
+                refreshIcon.setRotate(0);
+            }
+        });
     }
 }

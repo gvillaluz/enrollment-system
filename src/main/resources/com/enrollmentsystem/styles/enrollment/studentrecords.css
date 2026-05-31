@@ -32,7 +32,7 @@
     -fx-border-radius: 0;
 }
 
-.button {
+.clear-btn, .load-btn {
     -fx-border-radius: 0;
     -fx-background-radius: 0;
     -fx-font-size: 14;
